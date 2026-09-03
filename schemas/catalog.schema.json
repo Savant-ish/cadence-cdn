@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.cadence.example/schemas/catalog-1.0.0.json",
+  "title": "Cadence catalog",
+  "type": "object",
+  "required": ["games", "sets", "cards", "printings"],
+  "properties": {
+    "games": { "type": "array", "items": { "$ref": "#/$defs/game" } },
+    "sets": { "type": "array", "items": { "$ref": "#/$defs/set" } },
+    "cards": { "type": "array", "items": { "$ref": "#/$defs/card" } },
+    "printings": { "type": "array", "items": { "$ref": "#/$defs/printing" } }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identity": {
+      "type": "object",
+      "required": ["id", "identityKey"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^cadence:" },
+        "identityKey": { "type": "string", "pattern": "^v1:" }
+      }
+    },
+    "game": {
+      "allOf": [
+        { "$ref": "#/$defs/identity" },
+        {
+          "type": "object",
+          "required": ["slug", "name"],
+          "properties": {
+            "slug": { "type": "string" },
+            "name": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "set": {
+      "allOf": [
+        { "$ref": "#/$defs/identity" },
+        {
+          "type": "object",
+          "required": ["gameId", "name"],
+          "properties": {
+            "gameId": { "type": "string" },
+            "code": { "type": "string" },
+            "name": { "type": "string" },
+            "releaseDate": { "type": "string", "format": "date" }
+          }
+        }
+      ]
+    },
+    "card": {
+      "allOf": [
+        { "$ref": "#/$defs/identity" },
+        {
+          "type": "object",
+          "required": ["gameId", "name", "normalizedName"],
+          "properties": {
+            "gameId": { "type": "string" },
+            "name": { "type": "string" },
+            "normalizedName": { "type": "string" },
+            "cardType": { "type": "string" },
+            "metadata": { "type": "object" }
+          }
+        }
+      ]
+    },
+    "printing": {
+      "allOf": [
+        { "$ref": "#/$defs/identity" },
+        {
+          "type": "object",
+          "required": [
+            "cardId",
+            "setId",
+            "language",
+            "externalIds",
+            "provenance"
+          ],
+          "properties": {
+            "cardId": { "type": "string" },
+            "setId": { "type": "string" },
+            "collectorNumber": { "type": "string" },
+            "rarity": { "type": "string" },
+            "language": { "type": "string" },
+            "finish": { "type": "string" },
+            "edition": { "type": "string" },
+            "image": {
+              "type": "object",
+              "required": ["status"],
+              "properties": {
+                "sourceUrl": { "type": "string", "format": "uri" },
+                "status": {
+                  "enum": ["reference-only", "licensed", "unavailable"]
+                }
+              },
+              "additionalProperties": false
+            },
+            "externalIds": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            },
+            "provenance": {
+              "type": "object",
+              "required": ["provider", "release", "importedAt"],
+              "properties": {
+                "provider": { "type": "string" },
+                "release": { "type": "string" },
+                "sourceUrl": { "type": "string", "format": "uri" },
+                "importedAt": { "type": "string", "format": "date-time" }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    }
+  }
+}

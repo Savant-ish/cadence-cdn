@@ -1,0 +1,66 @@
+{
+  "name": "Pokemon",
+  "slug": "pokemon",
+  "sets": [
+    {
+      "setId": 100,
+      "name": "Base Set",
+      "abbreviation": "BS",
+      "publishedOn": "1999-01-09"
+    },
+    {
+      "setId": 200,
+      "name": "Jungle",
+      "abbreviation": "JU",
+      "publishedOn": "1999-06-16"
+    }
+  ],
+  "products": [
+    {
+      "productId": 4239,
+      "name": "Alakazam",
+      "cleanName": "Alakazam",
+      "setId": 100,
+      "number": "1/102",
+      "rarity": "Holo Rare",
+      "url": "https://www.tcgplayer.com/product/4239/pokemon-base-set-alakazam",
+      "imageUrl": "https://tcgplayer-cdn.tcgplayer.com/product/4239_in_1000x1000.jpg",
+      "metadata": {
+        "customAttributes": {
+          "stage": "Stage 2",
+          "hp": "80",
+          "type": "Psychic"
+        }
+      }
+    },
+    {
+      "productId": 4242,
+      "name": "Pikachu",
+      "setId": 100,
+      "number": "58/102",
+      "rarity": "Common",
+      "imageUrl": "https://tcgplayer-cdn.tcgplayer.com/product/4242_in_1000x1000.jpg",
+      "metadata": {
+        "customAttributes": {
+          "stage": "Basic",
+          "hp": "40",
+          "type": "Lightning"
+        }
+      }
+    },
+    {
+      "productId": 4301,
+      "name": "Pikachu",
+      "setId": 200,
+      "number": "60/64",
+      "rarity": "Common",
+      "metadata": {
+        "customAttributes": {
+          "stage": "Basic",
+          "hp": "50",
+          "type": "Lightning"
+        }
+      }
+    }
+  ]
+}
