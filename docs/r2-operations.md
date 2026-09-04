@@ -40,7 +40,7 @@ npm run catalog:publish-r2 -- \
   --public-base-url https://cdn.cadencetcg.dev
 ```
 
-The command reads `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` from the environment. Do not place credential values in shell history. Publication is idempotent for an identical build and refuses conflicting immutable objects.
+The command reads `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` from the environment. Do not place credential values in shell history. Publication is idempotent for an identical build and refuses conflicting immutable objects. Before moving the pointer, it fetches every build object through the public hostname and verifies exact bytes and SHA-256; this catches storage/CDN delivery failures that an authenticated R2 `HEAD` cannot detect.
 
 ## Verification and recovery
 
@@ -53,3 +53,5 @@ After publication:
 5. Review the GitHub Actions run and its retained diagnostic artifact.
 
 If R2 publication fails, the pointer is not updated and consumers retain the prior build. Fix the failure and rerun the workflow. Never overwrite or delete a conflicting build prefix as a shortcut; investigate why the same build ID produced different bytes. GitHub Releases remain available as the recovery source.
+
+The zone has a Cache Everything rule for `cdn.cadencetcg.dev` so JSON responses honor the origin cache directives. Immutable builds use a one-year edge/browser lifetime; the mutable pointer uses 60 seconds. A 5xx response must never be accepted as catalog data. Capture its `CF-RAY`, affected path, and timestamp when investigating Cloudflare delivery failures.

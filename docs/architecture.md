@@ -25,7 +25,7 @@ Published IDs must never be reinterpreted. A future normalization change require
 
 ## Artifact generation
 
-Each build emits `games.json`, a game index, game-level sets/cards/printings files, per-set files, `import-report.json`, and `manifest.json`. Artifact JSON is stably sorted and serialized. The 16-character build ID is derived from the ordered artifact descriptors, and the manifest records every consumer artifact's path, byte length, record count, and SHA-256 digest.
+Each build emits `games.json`, a game index, game-level sets/cards/printings files, per-set files, `import-report.json`, and `manifest.json`. Artifact JSON is stably sorted and serialized. The 16-character build ID is derived from the complete publication descriptor: schema and identity versions, deterministic generation/provenance metadata, consumer artifacts, the import-report digest, validation summary, and image policy. The manifest records every consumer artifact's path, byte length, record count, and SHA-256 digest. This prevents schema or operational output changes from reusing an immutable prefix.
 
 The build fails for invalid catalogs. Warnings—including missing optional values and unclassified sets—remain visible in `import-report.json`. A previous manifest can enforce the default 10% count-regression limit.
 
@@ -41,7 +41,7 @@ Cloudflare R2 is the primary unpacked origin. GitHub Releases provide immutable 
 
 All Cloudflare-managed `r2.dev` endpoints are disabled. The catalog hostname requires TLS 1.2 or newer. Its CORS policy permits public `GET` and `HEAD` requests and exposes ETag, length, type, and cache-control headers.
 
-R2 publication writes the complete tree under `catalog/builds/<build-id>/` with `public, max-age=31536000, immutable`. Every object stores its SHA-256 digest as R2 metadata and is verified with `HEAD`. An existing immutable key is accepted only if its digest matches; a conflict aborts publication. The publisher then writes `catalog/latest.json` last with `public, max-age=60, must-revalidate`.
+R2 publication writes the complete tree under `catalog/builds/<build-id>/` with `public, max-age=31536000, immutable`. Every object stores its SHA-256 digest as R2 metadata and is verified with `HEAD`. An existing immutable key is accepted only if its digest matches; a conflict aborts publication. The publisher then fetches every object through the public custom domain with bounded retries and verifies its byte length and SHA-256 digest. Only after public delivery succeeds does it write `catalog/latest.json` with `public, max-age=60, must-revalidate`.
 
 The GitHub Actions credential is an account token scoped to Object Read & Write on `cadence-catalog-public` only. Asset pipelines must use distinct credentials. See [R2 operations](r2-operations.md).
 

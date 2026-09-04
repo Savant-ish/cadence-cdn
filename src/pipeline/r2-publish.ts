@@ -30,6 +30,31 @@ export interface ObjectStore {
     body: Buffer,
     options: { contentType: string; cacheControl: string; sha256: string },
   ): Promise<void>
+  verifyPublic?(
+    key: string,
+    expected: { bytes: number; sha256: string },
+  ): Promise<void>
+}
+
+interface PublishedObject {
+  key: string
+  bytes: number
+  sha256: string
+}
+
+async function verifyPublicObjects(
+  store: ObjectStore,
+  objects: PublishedObject[],
+): Promise<void> {
+  if (!store.verifyPublic) return
+  let next = 0
+  const worker = async () => {
+    while (next < objects.length) {
+      const object = objects[next++]!
+      await store.verifyPublic!(object.key, object)
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(8, objects.length) }, worker))
 }
 
 async function filesUnder(root: string, directory = root): Promise<string[]> {
@@ -66,12 +91,14 @@ export async function publishCatalogToStore(
     throw new Error('Manifest contains an invalid build ID')
 
   const prefix = `catalog/builds/${manifest.buildId}`
+  const publishedObjects: PublishedObject[] = []
   let uploaded = 0
   let skipped = 0
   for (const path of await filesUnder(root)) {
     const body = await readFile(path)
     const digest = sha256(body)
     const key = `${prefix}/${objectPath(root, path)}`
+    publishedObjects.push({ key, bytes: body.length, sha256: digest })
     const existing = await store.head(key)
     if (existing) {
       if (existing.sha256 !== digest)
@@ -91,6 +118,8 @@ export async function publishCatalogToStore(
       throw new Error(`R2 upload verification failed: ${key}`)
     uploaded += 1
   }
+
+  await verifyPublicObjects(store, publishedObjects)
 
   const baseUrl = normalizedBaseUrl(publicBaseUrl)
   const latest = Buffer.from(
@@ -122,6 +151,7 @@ export async function publishCatalogToR2(
       secretAccessKey: options.secretAccessKey,
     },
   })
+  const baseUrl = normalizedBaseUrl(options.publicBaseUrl)
   const store: ObjectStore = {
     async head(key) {
       try {
@@ -150,6 +180,38 @@ export async function publishCatalogToR2(
           CacheControl: metadata.cacheControl,
           Metadata: { sha256: metadata.sha256 },
         }),
+      )
+    },
+    async verifyPublic(key, expected) {
+      let lastError: unknown
+      for (let attempt = 1; attempt <= 4; attempt += 1) {
+        try {
+          const response = await fetch(`${baseUrl}/${key}`, {
+            signal: AbortSignal.timeout(60_000),
+          })
+          if (!response.ok)
+            throw new Error(`HTTP ${response.status} ${response.statusText}`)
+          const body = Buffer.from(await response.arrayBuffer())
+          if (body.length !== expected.bytes)
+            throw new Error(
+              `expected ${expected.bytes} bytes, received ${body.length}`,
+            )
+          const digest = sha256(body)
+          if (digest !== expected.sha256)
+            throw new Error(
+              `expected SHA-256 ${expected.sha256}, received ${digest}`,
+            )
+          return
+        } catch (error) {
+          lastError = error
+          if (attempt < 4)
+            await new Promise((resolve) =>
+              setTimeout(resolve, 250 * 2 ** attempt),
+            )
+        }
+      }
+      throw new Error(
+        `Public R2 verification failed for ${key}: ${String(lastError)}`,
       )
     },
   }

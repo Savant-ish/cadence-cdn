@@ -10,6 +10,7 @@ import {
 } from '../src/pipeline/r2-publish.js'
 
 class MemoryStore implements ObjectStore {
+  readonly events: string[] = []
   readonly objects = new Map<
     string,
     { body: Buffer; sha256: string; cacheControl: string }
@@ -25,11 +26,22 @@ class MemoryStore implements ObjectStore {
     body: Buffer,
     options: { contentType: string; cacheControl: string; sha256: string },
   ): Promise<void> {
+    this.events.push(`put:${key}`)
     this.objects.set(key, {
       body,
       sha256: options.sha256,
       cacheControl: options.cacheControl,
     })
+  }
+
+  async verifyPublic(
+    key: string,
+    expected: { bytes: number; sha256: string },
+  ): Promise<void> {
+    const object = this.objects.get(key)
+    assert.equal(object?.body.length, expected.bytes)
+    assert.equal(object?.sha256, expected.sha256)
+    this.events.push(`verify:${key}`)
   }
 }
 
@@ -55,6 +67,12 @@ test('publishes immutable objects before the mutable R2 pointer', async () => {
     latest.manifestUrl,
     `https://cdn.example.com/catalog/builds/${first.buildId}/manifest.json`,
   )
+  const pointerWrite = store.events.indexOf('put:catalog/latest.json')
+  const publicChecks = store.events
+    .map((event, index) => ({ event, index }))
+    .filter(({ event }) => event.startsWith('verify:'))
+  assert.ok(publicChecks.length > 0)
+  assert.ok(publicChecks.every(({ index }) => index < pointerWrite))
   assert.equal(
     store.objects.get('catalog/latest.json')!.cacheControl,
     'public, max-age=60, must-revalidate',

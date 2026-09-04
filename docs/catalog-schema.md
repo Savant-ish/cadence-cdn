@@ -29,7 +29,9 @@ games/pokemon/sets/<cadence-set-id>.json
 
 The filename form of a set ID replaces `:` with `_`. Consumers should not derive this filename; use paths declared by `manifest.artifacts` or the game index.
 
-`manifest.json` contains `schemaVersion`, `buildId`, `generatedAt`, provider metadata, supported games, aggregate counts, artifact descriptors, validation totals, and `imagePolicy`. Each artifact descriptor provides `path`, `bytes`, `sha256`, and `records`. `import-report.json` is operational diagnostics and is not listed as a consumer artifact.
+`manifest.json` contains `schemaVersion`, `identityVersion`, `buildId`, `generatedAt`, provider metadata, supported games, aggregate counts, artifact descriptors, operational artifact descriptors, validation totals, and `imagePolicy`. Each consumer artifact descriptor provides `path`, `bytes`, `sha256`, and `records`. `import-report.json` is operational diagnostics and is checksum-bound through `operationalArtifacts`, but consumers do not need to ingest it.
+
+The build ID covers the complete immutable publication descriptor: schema and identity versions, generation/provenance metadata, consumer artifacts, operational artifacts, validation summary, and image policy. A change to any published byte or its governing contract therefore produces a new immutable prefix.
 
 ## R2 pointer
 

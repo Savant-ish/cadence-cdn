@@ -2,6 +2,7 @@ import { mkdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import {
+  IDENTITY_VERSION,
   SCHEMA_VERSION,
   type NormalizedCatalog,
   type SourceRelease,
@@ -14,6 +15,30 @@ interface Artifact {
   bytes: number
   sha256: string
   records: number
+}
+
+interface BuildDescriptor {
+  schemaVersion: string
+  identityVersion: string
+  generatedAt: string
+  provider: { name: string; release: string; manifestUrl: string }
+  supportedGames: string[]
+  counts: ValidationReport['counts']
+  artifacts: Artifact[]
+  operationalArtifacts: Array<{
+    path: string
+    bytes: number
+    sha256: string
+  }>
+  validation: { valid: boolean; errors: number; warnings: number }
+  imagePolicy: 'reference-only'
+}
+
+export function publicationBuildId(descriptor: BuildDescriptor): string {
+  return createHash('sha256')
+    .update(stableJson(descriptor))
+    .digest('hex')
+    .slice(0, 16)
 }
 
 export async function publishCatalog(
@@ -67,13 +92,13 @@ export async function publishCatalog(
     1,
   )
   artifacts.sort((a, b) => a.path.localeCompare(b.path))
-  const buildId = createHash('sha256')
-    .update(stableJson(artifacts))
-    .digest('hex')
-    .slice(0, 16)
-  await writeJson(join(output, 'manifest.json'), {
+  const importReport = await writeJson(
+    join(output, 'import-report.json'),
+    report,
+  )
+  const descriptor: BuildDescriptor = {
     schemaVersion: SCHEMA_VERSION,
-    buildId,
+    identityVersion: IDENTITY_VERSION,
     generatedAt,
     provider: {
       name: release.provider,
@@ -83,6 +108,7 @@ export async function publishCatalog(
     supportedGames: ['pokemon'],
     counts: report.counts,
     artifacts,
+    operationalArtifacts: [{ path: 'import-report.json', ...importReport }],
     validation: {
       valid: report.valid,
       errors: report.issues.filter((item) => item.severity === 'error').length,
@@ -90,6 +116,9 @@ export async function publishCatalog(
         .length,
     },
     imagePolicy: 'reference-only',
+  }
+  await writeJson(join(output, 'manifest.json'), {
+    ...descriptor,
+    buildId: publicationBuildId(descriptor),
   })
-  await writeJson(join(output, 'import-report.json'), report)
 }
