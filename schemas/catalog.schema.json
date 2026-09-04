@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://catalog.cadence.example/schemas/catalog-1.1.0.json",
+  "$id": "https://catalog.cadence.example/schemas/catalog-1.2.0.json",
   "title": "Cadence catalog",
   "type": "object",
   "required": ["games", "sets", "cards", "printings"],
@@ -51,6 +51,24 @@
                 "sourceUrl": { "type": "string", "format": "uri" },
                 "status": {
                   "enum": ["reference-only", "licensed", "unavailable"]
+                }
+              },
+              "additionalProperties": false
+            },
+            "classification": {
+              "type": "object",
+              "required": ["eraId", "eraName", "kind"],
+              "properties": {
+                "eraId": { "type": "string" },
+                "eraName": { "type": "string" },
+                "kind": {
+                  "enum": [
+                    "expansion",
+                    "promo",
+                    "trainer-kit",
+                    "championship-deck",
+                    "supplemental"
+                  ]
                 }
               },
               "additionalProperties": false

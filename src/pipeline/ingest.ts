@@ -8,6 +8,11 @@ import {
   validateCatalog,
 } from './validate.js'
 import { publishCatalog } from './publish.js'
+import {
+  applyApprovedTaxonomy,
+  loadTaxonomy,
+  taxonomyReport,
+} from '../taxonomy/pokemon.js'
 
 export interface BuildOptions {
   snapshot: string
@@ -17,6 +22,8 @@ export interface BuildOptions {
   previousManifest?: string
   allowCountDrop?: boolean
   dryRun?: boolean
+  taxonomyPath?: string
+  requireApprovedTaxonomy?: boolean
 }
 
 export function deterministicTimestamp(release: string): string {
@@ -48,7 +55,24 @@ export async function buildCatalog(
   const importedAt = options.importedAt ?? deterministicTimestamp(release.id)
   const input = await loadSnapshot(options.snapshot)
   const catalog = await provider.normalize(input, { release, importedAt })
+  const taxonomy = await loadTaxonomy(
+    options.taxonomyPath ?? 'config/taxonomy/pokemon-sets.json',
+  )
+  applyApprovedTaxonomy(catalog.sets, taxonomy)
   const report = validateCatalog(catalog)
+  const coverage = taxonomyReport(catalog.sets, taxonomy)
+  for (const message of coverage.invalid)
+    report.issues.push({ severity: 'error', code: 'invalid-taxonomy', message })
+  if (
+    options.requireApprovedTaxonomy &&
+    coverage.approved !== coverage.totalSets
+  )
+    report.issues.push({
+      severity: 'error',
+      code: 'taxonomy-approval-required',
+      message: `${coverage.totalSets - coverage.approved} sets lack approved taxonomy`,
+    })
+  report.valid = !report.issues.some((issue) => issue.severity === 'error')
   if (!options.allowCountDrop)
     await checkCountRegression(report, options.previousManifest)
   assertValid(report)

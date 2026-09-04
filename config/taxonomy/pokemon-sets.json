@@ -1,0 +1,1610 @@
+{
+  "assignments": {
+    "cadence:set:v1:005c7ef63d1b4be01db0a1ab": {
+      "eraId": "xy",
+      "kind": "supplemental",
+      "setName": "Generations: Radiant Collection",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:02d15e4224124dbfad1e9dfc": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "Trick or Trade BOOster Bundle 2023",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:0350938ae17faca4e3bbbe7f": {
+      "eraId": "ecard",
+      "kind": "expansion",
+      "setName": "Aquapolis",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:037f230a0405beda5064318b": {
+      "eraId": "black-and-white",
+      "kind": "promo",
+      "setName": "Black and White Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:045e40012f3aeec89c0e095a": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - Steam Siege",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:04675e29e82c388c521bb54d": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Team Rocket Returns",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:04b66f9210de84089bd46e82": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH05: Battle Styles",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:077f36bef2eb7807d6e9e35b": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH02: Rebel Clash",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:08b328890cb0e2f55645c916": {
+      "eraId": "sun-and-moon",
+      "kind": "supplemental",
+      "setName": "Ash vs Team Rocket Deck Kit (JP Exclusive)",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:0c5bc59a5efda009a5110ed1": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - Furious Fists",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:0d4cb1c616c1ed85561bbc71": {
+      "eraId": "diamond-and-pearl",
+      "kind": "expansion",
+      "setName": "DP Training Kit 1 Gold",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:1091b540da82618cbce139b8": {
+      "eraId": "heartgold-soulsilver",
+      "kind": "expansion",
+      "setName": "Undaunted",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:132c87eef55698bb016f94dd": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH12: Silver Tempest Trainer Gallery",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:1879e2f335bf59c4bc6c39d0": {
+      "eraId": "diamond-and-pearl",
+      "kind": "expansion",
+      "setName": "Legends Awakened",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:18832d2b117b392560fe9eb2": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - Roaring Skies",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:18e17e64769016e2c182025b": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - Ancient Origins",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:18e3cde65610c171f12f5590": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Dragon Vault",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:18f96165131148e0a331af04": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV10: Destined Rivals",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:1bd55911f57b70370fe532a1": {
+      "eraId": "unknown",
+      "kind": "promo",
+      "setName": "Alternate Art Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:1d370af99e47cc42ee41a5b3": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Plasma Blast",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:1d74822ea72b1603d6ceeb53": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV07: Stellar Crown",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:1f6392a14fea1264d6ab62a6": {
+      "eraId": "xy",
+      "kind": "supplemental",
+      "setName": "Deck Exclusives",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:202311685bd26b8661e1e6af": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "Shining Legends",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:229e526fa45abdbf9aa86d1e": {
+      "eraId": "platinum",
+      "kind": "expansion",
+      "setName": "Platinum",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:233fb2db528ec294b6c252bd": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH04: Vivid Voltage",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:23d677d2c032e986a5a3c1b5": {
+      "eraId": "mega-evolution",
+      "kind": "expansion",
+      "setName": "ME03: Perfect Order",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:2460e679604b57f5abd7cac8": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Delta Species",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:2486138711bd16ae8ed62490": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM Base Set",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:250d8c63a0ee52d36c484d38": {
+      "eraId": "sword-and-shield",
+      "kind": "supplemental",
+      "setName": "Prize Pack Series Cards",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:267e56a11d169a3984a4f936": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Dragons Exalted",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:26f255130d4730fac4bdc3b0": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "POP Series 1",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:2871132ccecfd08ad7f5d515": {
+      "eraId": "mega-evolution",
+      "kind": "expansion",
+      "setName": "ME: Ascended Heroes",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:29e82f1dba445e3f5c4944bf": {
+      "eraId": "sun-and-moon",
+      "kind": "trainer-kit",
+      "setName": "SM Trainer Kit: Alolan Sandslash & Alolan Ninetales",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:2a6db1e1ac09021d45dae86e": {
+      "eraId": "diamond-and-pearl",
+      "kind": "expansion",
+      "setName": "Diamond and Pearl",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:301e28aff26a6ba9fd8f2365": {
+      "eraId": "black-and-white",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2012",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:30d53a67b2c4d1b2ae4d0b9f": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Emerald",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:30e3c7dc8af7407f4350fc50": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "Jumbo Cards",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:31e6283e48a7719c6ee51ca2": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH: Crown Zenith: Galarian Gallery",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:3431231a514d2e9dc8e9f8b6": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "EX Battle Stadium",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:34ce79a7822d084a6fce17c1": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Cosmic Eclipse",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:37da9d9490e38d76b8613e51": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY Base Set",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:3a7622e13f55f78f68cdd3de": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "Generations",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:3aa7fdf72b8c8f32acfe02ab": {
+      "eraId": "xy",
+      "kind": "trainer-kit",
+      "setName": "XY Trainer Kit: Bisharp & Wigglytuff",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:3c2e4b3c5f3920365cf3ae22": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH11: Lost Origin Trainer Gallery",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:3d559243d71425e06f3fb99b": {
+      "eraId": "sun-and-moon",
+      "kind": "promo",
+      "setName": "SWSH: Sword & Shield Promo Cards",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:3e34486828d4c726ef76fab1": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH: Crown Zenith",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:3f37c58cc7203179f75f700e": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - Flashfire",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:40f17b52a48d56c6eba05a5a": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "POP Series 8",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:412443298812726fdee6f419": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - Primal Clash",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:41af99ec4adc4f8b3968f8bb": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "POP Series 5",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:43b0a711111d582825c6a74a": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "Double Crisis",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:43baf1d802982b1dffa6b6bc": {
+      "eraId": "heartgold-soulsilver",
+      "kind": "expansion",
+      "setName": "Unleashed",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:448f2f3d4aee5ee26af1b9d7": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Legendary Treasures",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:45143acb1f0d5e46712f5606": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV05: Temporal Forces",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:459af84af722cb32facadb1b": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH03: Darkness Ablaze",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:478ccd90dfc35bb2fd1a4159": {
+      "eraId": "heartgold-soulsilver",
+      "kind": "expansion",
+      "setName": "Call of Legends",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:47a5ff36a44bae6b46b4d51b": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "My First Battle",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:4b027bf49ecb7c450ff55b70": {
+      "eraId": "diamond-and-pearl",
+      "kind": "expansion",
+      "setName": "Secret Wonders",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:4b2a3b36c9d01e688d455aef": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Unbroken Bonds",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:4b9c71256d137ca48cae7b11": {
+      "eraId": "platinum",
+      "kind": "expansion",
+      "setName": "Supreme Victors",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:4e4daefed38acc29abed5ddd": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Noble Victories",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:4f79ef2393e5deb8152da481": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "Shining Fates",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:4fa2bfedf399e5709cad17ab": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "Hidden Fates: Shiny Vault",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:4fff9974c1237bae13c60914": {
+      "eraId": "neo",
+      "kind": "expansion",
+      "setName": "Neo Discovery",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:510a17c2a42a514504af0a4e": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Crimson Invasion",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:52ffb6ea3ace64d8b98b9528": {
+      "eraId": "heartgold-soulsilver",
+      "kind": "expansion",
+      "setName": "HeartGold SoulSilver",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5304078cd4c38b2e6afecbee": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Emerging Powers",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:53bd1d7e6f13101ff3b3d7dd": {
+      "eraId": "neo",
+      "kind": "expansion",
+      "setName": "Neo Genesis",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:53c6726486aa1ddca5e48454": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Dragon",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5614416d954d872461f56e79": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH08: Fusion Strike",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:567c6f09fd8af151bc10fb67": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "Trick or Trade BOOster Bundle",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5870e89115b8778bd6dc3f1e": {
+      "eraId": "ex",
+      "kind": "promo",
+      "setName": "Diamond and Pearl Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:58bd6dd4eede42f91da083bd": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Dark Explorers",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5a19df8982af514fcda1c64f": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "First Partner Pack",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5a33bfaaa013471a2b280397": {
+      "eraId": "sun-and-moon",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2019",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5a4c4467629c5f7f25b7e8cf": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "Trading Card Game Classic",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5bb7752f8fa92b9e8fa41291": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "Hidden Fates",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5bf5d5d8e0398f1680223d8a": {
+      "eraId": "scarlet-and-violet",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2023",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5c124f25e023d3356276854b": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "POP Series 7",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5d9f418cc0fb1d702c2825a6": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH06: Chilling Reign",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5dd90dc28614477fe60136c0": {
+      "eraId": "ecard",
+      "kind": "promo",
+      "setName": "Best of Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5eb9efcbe5a806e4c666139e": {
+      "eraId": "unknown",
+      "kind": "trainer-kit",
+      "setName": "EX Trainer Kit 2: Plusle & Minun",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:5f2d48bfb58443dd91f372b3": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Power Keepers",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:614e72540801ae669ee71122": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Kalos Starter Set",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:61b4e10f15daf1d430718780": {
+      "eraId": "diamond-and-pearl",
+      "kind": "expansion",
+      "setName": "Mysterious Treasures",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:62ab9ae1bcc5e0f06a41e13e": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "POP Series 3",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:634abd3b6670668f5612d1f0": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Guardians Rising",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:638de19e605bb8c690846d4a": {
+      "eraId": "sword-and-shield",
+      "kind": "promo",
+      "setName": "McDonald's 25th Anniversary Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:6680bf0e85953be65775422e": {
+      "eraId": "mega-evolution",
+      "kind": "expansion",
+      "setName": "ME01: Mega Evolution",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:66d1d73f71c148137ff7da58": {
+      "eraId": "mega-evolution",
+      "kind": "expansion",
+      "setName": "MEE: Mega Evolution Energies",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:68e7ff7d333f81518b0c4f3a": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Crystal Guardians",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:6d5fe28261bd93650624dff3": {
+      "eraId": "xy",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2016",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:6db4e3c1d1eddf3e8cde76ed": {
+      "eraId": "ecard",
+      "kind": "expansion",
+      "setName": "Skyridge",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:6efa8cec24eaaac0ce57dda3": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV: Prismatic Evolutions",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:70dc9bf8106911e108b3332e": {
+      "eraId": "original",
+      "kind": "expansion",
+      "setName": "Team Rocket",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:75005d928ba49cab50fc52c4": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Unified Minds",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:77d9089df2253eaf31c5df03": {
+      "eraId": "black-and-white",
+      "kind": "supplemental",
+      "setName": "Legendary Treasures: Radiant Collection",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:77ed68f72abd10a506e44ddd": {
+      "eraId": "mega-evolution",
+      "kind": "expansion",
+      "setName": "ME06: Delta Reign",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7800f603f7b42e382d7d7e03": {
+      "eraId": "neo",
+      "kind": "expansion",
+      "setName": "Neo Revelation",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:78115e73a6f85bd09df2e451": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV03: Obsidian Flames",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:78cf9aeb09db2e44e874dd3a": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Sandstorm",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:79a2d9effe0aa360917fd959": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "Trick or Trade BOOster Bundle 2024",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:79da759b5be3e0758d067f39": {
+      "eraId": "xy",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2014",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:79e01f92b7ab33b7788c4b4f": {
+      "eraId": "ecard",
+      "kind": "expansion",
+      "setName": "Expedition",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7aee93edfe579e647254f905": {
+      "eraId": "mega-evolution",
+      "kind": "promo",
+      "setName": "ME: Mega Evolution Promo",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7bb951cddcaa478fef78ab53": {
+      "eraId": "heartgold-soulsilver",
+      "kind": "trainer-kit",
+      "setName": "HGSS Trainer Kit: Gyarados & Raichu",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7bfad38f4051e55b17c8585f": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV04: Paradox Rift",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7c4a2c15372849a97770891c": {
+      "eraId": "diamond-and-pearl",
+      "kind": "expansion",
+      "setName": "DP Training Kit 1 Blue",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7c77ec0dc2baa8aeca380bc3": {
+      "eraId": "xy",
+      "kind": "promo",
+      "setName": "SM Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7c7901886bd36c194f7fccec": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Dragon Frontiers",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7c896ca6d7d4083a9172a7e1": {
+      "eraId": "sun-and-moon",
+      "kind": "championship-deck",
+      "setName": "World Championship Decks",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7cceae0d9acee262548d788b": {
+      "eraId": "original",
+      "kind": "expansion",
+      "setName": "Fossil",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7cd07e78b83200732bc365fd": {
+      "eraId": "original",
+      "kind": "expansion",
+      "setName": "Gym Heroes",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7df2c4a4f6ab9f947c2e86b9": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - Phantom Forces",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:7e247e52e3ec9bc0beb1b0d2": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Deoxys",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:827183ef9a07ddeede6dc9e3": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - BREAKthrough",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:8355ce51d487ec092707cee2": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Burning Shadows",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:8646ff1d72f24a68c9eb7c10": {
+      "eraId": "xy",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2015",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:8729c6608ccc0bce40235079": {
+      "eraId": "original",
+      "kind": "expansion",
+      "setName": "Jungle",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:8a76edece1d3d9ab04b52ef9": {
+      "eraId": "black-and-white",
+      "kind": "promo",
+      "setName": "XY Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:8a7881687210f6297273c2ad": {
+      "eraId": "xy",
+      "kind": "trainer-kit",
+      "setName": "XY Trainer Kit: Pikachu Libre & Suicune",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:8b71b6774b75c3cf8be2054e": {
+      "eraId": "original",
+      "kind": "expansion",
+      "setName": "Base Set",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:8e25c1986a8193fcde91860a": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "FireRed & LeafGreen",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:8f2a9104ae52a3340e471cda": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV: Black Bolt",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:8f4f93ca405432a537ceafa0": {
+      "eraId": "diamond-and-pearl",
+      "kind": "promo",
+      "setName": "Countdown Calendar Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:903eec1708c97870bbbdd2a8": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Ultra Prism",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:93255a24200692a6d5b76e52": {
+      "eraId": "unknown",
+      "kind": "promo",
+      "setName": "Professor Program Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:95c027d951b6089e1b02834c": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Plasma Storm",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:9611296b95540b4533d6648b": {
+      "eraId": "black-and-white",
+      "kind": "trainer-kit",
+      "setName": "BW Trainer Kit: Excadrill & Zoroark",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:990a8828846b7c3fb85ab566": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV06: Twilight Masquerade",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:9958654d62b96cf0a517a0ef": {
+      "eraId": "platinum",
+      "kind": "expansion",
+      "setName": "Arceus",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:9985ccc1cd0cf66f4020b6dc": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Unseen Forces",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:9b69459d38e33cb684d9c3df": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV: Paldean Fates",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:9be528549ee17203386e6858": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH11: Lost Origin",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:9cdd8496d99a59142e8baed6": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Forbidden Light",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:9cf058698bb1988d88d9b896": {
+      "eraId": "mega-evolution",
+      "kind": "expansion",
+      "setName": "ME05: Pitch Black",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:9ef7a6e3ee6b2ccc5ff420cf": {
+      "eraId": "neo",
+      "kind": "supplemental",
+      "setName": "Legendary Collection",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:9fbc1451a267db22793b37ae": {
+      "eraId": "neo",
+      "kind": "expansion",
+      "setName": "e-Reader Sample Cards",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:a051fc2d20c723a39387f289": {
+      "eraId": "scarlet-and-violet",
+      "kind": "supplemental",
+      "setName": "Battle Academy 2024",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:a1033e27efec11c3e8a18896": {
+      "eraId": "sun-and-moon",
+      "kind": "trainer-kit",
+      "setName": "SM Trainer Kit: Lycanroc & Alolan Raichu",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:a2a1439f624047bd78a598a3": {
+      "eraId": "mega-evolution",
+      "kind": "supplemental",
+      "setName": "ME: 30th Celebration Classic Collection",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:a46f1ca9d1dee78129658605": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "POP Series 4",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:a488440f6e490d38f3ce6076": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Plasma Freeze",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:a6bb98bc57f4bbc16df861b5": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Black and White",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:aa9fc8ace8d51832785fa6e1": {
+      "eraId": "diamond-and-pearl",
+      "kind": "expansion",
+      "setName": "Stormfront",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:aadefd2144a651ceee3ae1ed": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Ruby and Sapphire",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:acc0058a75edc607ceafd0e5": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH12: Silver Tempest",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:aeeae63f2a9c3b75c04f9c33": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Boundaries Crossed",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:af030737fc010a0af80cffbb": {
+      "eraId": "mega-evolution",
+      "kind": "promo",
+      "setName": "Player Placement Trainer Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:afee44f2c0bcb9a7b0edbf01": {
+      "eraId": "unknown",
+      "kind": "supplemental",
+      "setName": "Miscellaneous Cards & Products",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:b0a42c1a97f0285482f5a8d0": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Team Magma vs Team Aqua",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:b24f09c236f5829d7f1c2969": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "Pokemon GO",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:b301ebfc4e16b583d140b1c4": {
+      "eraId": "xy",
+      "kind": "trainer-kit",
+      "setName": "XY Trainer Kit: Latias & Latios",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:b43cc92a51edc29703eca452": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH10: Astral Radiance Trainer Gallery",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:b486bec6dd1be292a60e7d59": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Team Up",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:b84ea03d6b8fa4449cca0155": {
+      "eraId": "unknown",
+      "kind": "promo",
+      "setName": "Burger King Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:bab153d6b1bf83a4282e7fd4": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV: White Flare",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:bab9f7b20987cca12b236295": {
+      "eraId": "mega-evolution",
+      "kind": "expansion",
+      "setName": "ME02: Phantasmal Flames",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:bfd951c402ce299eb32025f3": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH09: Brilliant Stars Trainer Gallery",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c08df0f373d7b8d51cad8709": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Celestial Storm",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c117149d3c32a5f3eee11b28": {
+      "eraId": "unknown",
+      "kind": "supplemental",
+      "setName": "Blister Exclusives",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c14da619b84b554f31a503b7": {
+      "eraId": "neo",
+      "kind": "expansion",
+      "setName": "Neo Destiny",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c3eaa7e72016e52ff12721c3": {
+      "eraId": "heartgold-soulsilver",
+      "kind": "expansion",
+      "setName": "Triumphant",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c48b5db045e1557dd2475e56": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "Dragon Majesty",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c518df95fdd4cba40d6d09f2": {
+      "eraId": "unknown",
+      "kind": "promo",
+      "setName": "Pikachu World Collection Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c5bbdd37136aeff7c21382be": {
+      "eraId": "sword-and-shield",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2022",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c66258ca910715f5aeba3643": {
+      "eraId": "mega-evolution",
+      "kind": "expansion",
+      "setName": "ME04: Chaos Rising",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c6c2f2135baa5c78d1ff94b3": {
+      "eraId": "sword-and-shield",
+      "kind": "supplemental",
+      "setName": "Battle Academy 2022",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:c79059a05e3c7fa312ecdec5": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV: Shrouded Fable",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:ca77b8ece6b8a09045ec7ea5": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - BREAKpoint",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:cba91e12666b28e5d0f7eabc": {
+      "eraId": "ex",
+      "kind": "promo",
+      "setName": "Kids WB Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:ccdcaacdd968d80293e9c653": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Legend Maker",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d00cef8e84ea19827647dd93": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV: Scarlet & Violet 151",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d033b81e0970e71301b9b53d": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH09: Brilliant Stars",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d0f7bedd24989669e976775e": {
+      "eraId": "sword-and-shield",
+      "kind": "supplemental",
+      "setName": "Celebrations: Classic Collection",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d3bd128453f6793d5ce28721": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "Shining Fates: Shiny Vault",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d6a6ca0b91435e3f540b20ee": {
+      "eraId": "scarlet-and-violet",
+      "kind": "promo",
+      "setName": "SV: Scarlet & Violet Promo Cards",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d6ba2af1c8e5a3a96acbb555": {
+      "eraId": "sun-and-moon",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2018",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d80ec29482f5baa5b4829ae0": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "Celebrations",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d841931a049f3e27d74a55f8": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV08: Surging Sparks",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d8fae5fbe218419230068d67": {
+      "eraId": "original",
+      "kind": "expansion",
+      "setName": "Base Set 2",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:d9e4dea6e922c3cab7e6198e": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH07: Evolving Skies",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:db062aa6679c2aed42214f36": {
+      "eraId": "unknown",
+      "kind": "trainer-kit",
+      "setName": "EX Trainer Kit 1: Latias & Latios",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:db06b41c6127360f3851bb65": {
+      "eraId": "original",
+      "kind": "promo",
+      "setName": "WoTC Promo",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:db98c0e5eb4080dd6777a8e8": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH10: Astral Radiance",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:dbfe9483c55637c125dc8f88": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "SWSH01: Sword & Shield Base Set",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:dcd7a3cb129adcd53aabf910": {
+      "eraId": "black-and-white",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2011",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:de1a27218a96b96f6a8ee9f2": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - Evolutions",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:e04dc76fe032677b98c87d88": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "POP Series 9",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:e1c848b4fc899823e8318b5f": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV02: Paldea Evolved",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:e3ef75ff0852c860585ebb6e": {
+      "eraId": "unknown",
+      "kind": "promo",
+      "setName": "Nintendo Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:e53c7c386c16596b7dc55213": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "POP Series 2",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:e6656fb9be6ae272ae588b24": {
+      "eraId": "platinum",
+      "kind": "expansion",
+      "setName": "Rising Rivals",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:e760081d30b4a4342ea4dce4": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV01: Scarlet & Violet Base Set",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:e843487139f0f312e85c3d9c": {
+      "eraId": "black-and-white",
+      "kind": "expansion",
+      "setName": "Next Destinies",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:e8ccb8205fabea7bdfcd6508": {
+      "eraId": "unknown",
+      "kind": "expansion",
+      "setName": "POP Series 6",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:e9d565b0e1a2d9b67cf26926": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "XY - Fates Collide",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:ebfeef193c38583cd9760916": {
+      "eraId": "diamond-and-pearl",
+      "kind": "trainer-kit",
+      "setName": "DP Trainer Kit: Manaphy & Lucario",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:ee0ec72957df10b3cac2398a": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SVE: Scarlet & Violet Energies",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:eeb49dd6b158d34a2a0f85da": {
+      "eraId": "diamond-and-pearl",
+      "kind": "expansion",
+      "setName": "Great Encounters",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:ef4eec61c9b4af24f0c8806a": {
+      "eraId": "neo",
+      "kind": "expansion",
+      "setName": "Southern Islands",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f076529eed62d9a9199be49f": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "SM - Lost Thunder",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f07c93687a9f806ac97d8f8f": {
+      "eraId": "scarlet-and-violet",
+      "kind": "expansion",
+      "setName": "SV09: Journey Together",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f0ba0ddfe41df776e12da1c8": {
+      "eraId": "xy",
+      "kind": "trainer-kit",
+      "setName": "XY Trainer Kit: Sylveon & Noivern",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f0c6dc5ea6f27544d111f633": {
+      "eraId": "original",
+      "kind": "expansion",
+      "setName": "Base Set (Shadowless)",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f2fea420a30ddfe4242590f7": {
+      "eraId": "sword-and-shield",
+      "kind": "expansion",
+      "setName": "Champion's Path",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f39b8319817d2788b1abfa7b": {
+      "eraId": "diamond-and-pearl",
+      "kind": "expansion",
+      "setName": "Majestic Dawn",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f42deb06e7a7dcdbf732639c": {
+      "eraId": "platinum",
+      "kind": "expansion",
+      "setName": "Rumble",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f453dfda34f9014f51561207": {
+      "eraId": "scarlet-and-violet",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2024",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f579e2e29a614bb21f1544d8": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Holon Phantoms",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f5c270bd3671d2fef6d18d8b": {
+      "eraId": "original",
+      "kind": "expansion",
+      "setName": "Gym Challenge",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f76f1f1d31c626ca19734d2b": {
+      "eraId": "mega-evolution",
+      "kind": "supplemental",
+      "setName": "First Partner Collection 2026",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f805392b8145e723f5f81b8a": {
+      "eraId": "sword-and-shield",
+      "kind": "supplemental",
+      "setName": "Battle Academy",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:f9401da7df89d77b7f126f92": {
+      "eraId": "sun-and-moon",
+      "kind": "promo",
+      "setName": "McDonald's Promos 2017",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:fc54f2b176fe2ba184ee3184": {
+      "eraId": "xy",
+      "kind": "expansion",
+      "setName": "League & Championship Cards",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:fda65bcebefb0ec7d1639586": {
+      "eraId": "sun-and-moon",
+      "kind": "expansion",
+      "setName": "Detective Pikachu",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:fde6be926a9bb0ef68d6213c": {
+      "eraId": "platinum",
+      "kind": "promo",
+      "setName": "HGSS Promos",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:fe939134b7e58053ec2f7e39": {
+      "eraId": "mega-evolution",
+      "kind": "expansion",
+      "setName": "ME: 30th Celebration",
+      "source": "inferred",
+      "status": "pending"
+    },
+    "cadence:set:v1:fffb22f0e3f6de496678b332": {
+      "eraId": "ex",
+      "kind": "expansion",
+      "setName": "Hidden Legends",
+      "source": "inferred",
+      "status": "pending"
+    }
+  },
+  "eras": [
+    {
+      "id": "original",
+      "name": "Original",
+      "startsOn": "1999-01-09"
+    },
+    {
+      "id": "neo",
+      "name": "Neo",
+      "startsOn": "2000-12-16"
+    },
+    {
+      "id": "ecard",
+      "name": "e-Card",
+      "startsOn": "2002-09-15"
+    },
+    {
+      "id": "ex",
+      "name": "EX",
+      "startsOn": "2003-06-18"
+    },
+    {
+      "id": "diamond-and-pearl",
+      "name": "Diamond & Pearl",
+      "startsOn": "2007-05-23"
+    },
+    {
+      "id": "platinum",
+      "name": "Platinum",
+      "startsOn": "2009-02-11"
+    },
+    {
+      "id": "heartgold-soulsilver",
+      "name": "HeartGold & SoulSilver",
+      "startsOn": "2010-02-10"
+    },
+    {
+      "id": "black-and-white",
+      "name": "Black & White",
+      "startsOn": "2011-04-25"
+    },
+    {
+      "id": "xy",
+      "name": "XY",
+      "startsOn": "2014-02-05"
+    },
+    {
+      "id": "sun-and-moon",
+      "name": "Sun & Moon",
+      "startsOn": "2017-02-03"
+    },
+    {
+      "id": "sword-and-shield",
+      "name": "Sword & Shield",
+      "startsOn": "2020-02-07"
+    },
+    {
+      "id": "scarlet-and-violet",
+      "name": "Scarlet & Violet",
+      "startsOn": "2023-03-31"
+    },
+    {
+      "id": "mega-evolution",
+      "name": "Mega Evolution",
+      "startsOn": "2025-09-26"
+    },
+    {
+      "id": "unknown",
+      "name": "Needs review"
+    }
+  ],
+  "game": "pokemon",
+  "schemaVersion": 1
+}

@@ -4,6 +4,12 @@ import { TcgjsonProvider } from './providers/tcgjson/client.js'
 import { buildCatalog } from './pipeline/ingest.js'
 import { verifyPublishedArtifacts } from './pipeline/verify-artifacts.js'
 import { createReleaseMetadata } from './pipeline/release-assets.js'
+import { loadSnapshot } from './providers/tcgjson/client.js'
+import {
+  loadTaxonomy,
+  taxonomyReport,
+  updateSuggestions,
+} from './taxonomy/pokemon.js'
 
 function args(tokens: string[]): {
   command?: string
@@ -38,7 +44,7 @@ async function main(): Promise<void> {
   const parsed = args(process.argv.slice(2))
   if (parsed.flags.has('help') || !parsed.command) {
     console.log(
-      'Usage: catalog <fetch|build|validate|verify-manifest|package-release> [options]',
+      'Usage: catalog <fetch|build|validate|verify-manifest|package-release|taxonomy-suggest|taxonomy-report> [options]',
     )
     return
   }
@@ -68,6 +74,40 @@ async function main(): Promise<void> {
   const game = textFlag(parsed.flags, 'game', 'pokemon')
   if (providerName !== 'tcgjson' || game !== 'pokemon')
     throw new Error('MVP supports --provider tcgjson --game pokemon')
+  if (
+    parsed.command === 'taxonomy-suggest' ||
+    parsed.command === 'taxonomy-report'
+  ) {
+    const snapshot = resolve(
+      textFlag(
+        parsed.flags,
+        'snapshot',
+        'fixtures/tcgjson/pokemon.sample.json',
+      ),
+    )
+    const taxonomyPath = resolve(
+      textFlag(parsed.flags, 'taxonomy', 'config/taxonomy/pokemon-sets.json'),
+    )
+    const provider = new TcgjsonProvider()
+    const catalog = await provider.normalize(await loadSnapshot(snapshot), {
+      release: {
+        provider: 'tcgjson',
+        id: 'taxonomy-review',
+        manifestUrl: 'taxonomy://review',
+        artifactUrl: snapshot,
+        artifactName: 'catalog.json',
+      },
+      importedAt: '1970-01-01T00:00:00.000Z',
+    })
+    const taxonomy =
+      parsed.command === 'taxonomy-suggest'
+        ? await updateSuggestions(catalog.sets, taxonomyPath)
+        : await loadTaxonomy(taxonomyPath)
+    const report = taxonomyReport(catalog.sets, taxonomy)
+    console.log(JSON.stringify(report, null, 2))
+    if (report.invalid.length) process.exitCode = 1
+    return
+  }
   if (parsed.command === 'fetch') {
     const provider = new TcgjsonProvider()
     const release = await provider.resolveRelease(
@@ -110,6 +150,10 @@ async function main(): Promise<void> {
         : {}),
       allowCountDrop: parsed.flags.has('allow-count-drop'),
       dryRun: parsed.command === 'validate' || parsed.flags.has('dry-run'),
+      taxonomyPath: resolve(
+        textFlag(parsed.flags, 'taxonomy', 'config/taxonomy/pokemon-sets.json'),
+      ),
+      requireApprovedTaxonomy: parsed.flags.has('require-approved-taxonomy'),
     })
     console.log(
       `Valid: ${report.counts.sets} sets, ${report.counts.cards} cards, ${report.counts.printings} printings; ${report.issues.filter((item) => item.severity === 'warning').length} warnings`,

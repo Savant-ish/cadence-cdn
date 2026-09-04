@@ -55,6 +55,12 @@ export function validateCatalog(catalog: NormalizedCatalog): ValidationReport {
         code: 'unapproved-set-image-license',
         message: `${set.id} marks a set image licensed without an approved source policy`,
       })
+    if (!set.classification)
+      issues.push({
+        severity: 'warning',
+        code: 'unclassified-set',
+        message: `${set.id} lacks an approved era and set-kind classification`,
+      })
   }
   for (const card of catalog.cards)
     if (!gameIds.has(card.gameId))

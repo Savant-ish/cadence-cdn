@@ -12,6 +12,8 @@
     "catalog:validate": "npm run build --silent && node build/src/cli.js validate",
     "catalog:verify-artifacts": "npm run build --silent && node build/src/cli.js verify-manifest",
     "catalog:package-release": "npm run build --silent && node build/src/cli.js package-release",
+    "taxonomy:suggest": "npm run build --silent && node build/src/cli.js taxonomy-suggest",
+    "taxonomy:report": "npm run build --silent && node build/src/cli.js taxonomy-report",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",

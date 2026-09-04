@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = '1.1.0'
+export const SCHEMA_VERSION = '1.2.0'
 export const IDENTITY_VERSION = 'v1'
 
 export interface CatalogGame {
@@ -18,6 +18,16 @@ export interface CatalogSet {
   image?: {
     sourceUrl?: string
     status: 'reference-only' | 'licensed' | 'unavailable'
+  }
+  classification?: {
+    eraId: string
+    eraName: string
+    kind:
+      | 'expansion'
+      | 'promo'
+      | 'trainer-kit'
+      | 'championship-deck'
+      | 'supplemental'
   }
 }
 

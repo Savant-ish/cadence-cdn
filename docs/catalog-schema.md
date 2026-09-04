@@ -1,6 +1,8 @@
-# Catalog schema 1.1.0
+# Catalog schema 1.2.0
 
 The machine-readable contract is [`schemas/catalog.schema.json`](../schemas/catalog.schema.json). Games contain sets and conceptual cards. Sets may carry a source icon URL under the same reference-only image policy used for card printings. A printing joins a card to a set and carries collector number, language, variant details, external cross-references, image-reference policy, and provenance.
+
+An approved set taxonomy adds `classification.eraId`, `classification.eraName`, and `classification.kind`. Pending suggestions are never presented as approved catalog facts.
 
 Cadence IDs are SHA-256-derived opaque identifiers. `identityKey` is intentionally retained for collision audits. Consumers must use `id`, not reconstruct it or depend on `identityKey` formatting.
 

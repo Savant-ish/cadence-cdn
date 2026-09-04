@@ -25,6 +25,8 @@ npm run catalog:build
 
 Use `--dry-run` to normalize and validate without writing output. Use `--previous-manifest path/to/manifest.json` to reject set/card/printing drops greater than 10%; `--allow-count-drop` is the explicit override. `--imported-at` is available for nonstandard release names, but reproducible builds must reuse the same value.
 
+Pokémon era and set-kind assignments are maintained as reviewed Cadence taxonomy rather than inferred in consumers. See [taxonomy administration](docs/taxonomy-admin.md).
+
 ## Output
 
 `dist/manifest.json` lists the schema version, content-derived build ID, pinned provider release, counts, artifact sizes, SHA-256 checksums, validation summary, and image policy. `cadence-web` should verify these checksums and consume only these Cadence records.
