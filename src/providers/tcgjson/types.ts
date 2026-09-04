@@ -5,6 +5,7 @@ export interface TcgjsonSet {
   code?: string
   publishedOn?: string
   releaseDate?: string
+  iconUrl?: string
 }
 
 export interface TcgjsonProduct {

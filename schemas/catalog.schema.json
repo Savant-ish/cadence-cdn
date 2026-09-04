@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://catalog.cadence.example/schemas/catalog-1.0.0.json",
+  "$id": "https://catalog.cadence.example/schemas/catalog-1.1.0.json",
   "title": "Cadence catalog",
   "type": "object",
   "required": ["games", "sets", "cards", "printings"],
@@ -43,7 +43,18 @@
             "gameId": { "type": "string" },
             "code": { "type": "string" },
             "name": { "type": "string" },
-            "releaseDate": { "type": "string", "format": "date" }
+            "releaseDate": { "type": "string", "format": "date" },
+            "image": {
+              "type": "object",
+              "required": ["status"],
+              "properties": {
+                "sourceUrl": { "type": "string", "format": "uri" },
+                "status": {
+                  "enum": ["reference-only", "licensed", "unavailable"]
+                }
+              },
+              "additionalProperties": false
+            }
           }
         }
       ]

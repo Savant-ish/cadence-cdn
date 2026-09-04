@@ -35,7 +35,7 @@ Raw snapshots, generated catalogs, and images are excluded from Git. Image URLs 
 
 CI verifies every push and pull request. The `Publish catalog` workflow runs each Monday and can be dispatched manually with either `latest` or a pinned `tcgjson` release. It checks upstream size and SHA-256 metadata, rejects large record-count regressions, verifies every generated artifact, and rebuilds into a second directory to prove determinism.
 
-Each accepted source release becomes an immutable GitHub Release named `catalog-<provider-release>`. The release contains the catalog archive, manifest, import report, checksums, and `latest.json`. Consumers can bootstrap from these stable URLs:
+Each accepted source release and Cadence schema combination becomes an immutable GitHub Release named `catalog-v<schema-version>-<provider-release>`. The release contains the catalog archive, manifest, import report, checksums, and `latest.json`. Consumers can bootstrap from these stable URLs:
 
 - `https://github.com/Savant-ish/cadence-cdn/releases/latest/download/latest.json`
 - `https://github.com/Savant-ish/cadence-cdn/releases/latest/download/manifest.json`

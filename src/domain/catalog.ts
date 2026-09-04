@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = '1.0.0'
+export const SCHEMA_VERSION = '1.1.0'
 export const IDENTITY_VERSION = 'v1'
 
 export interface CatalogGame {
@@ -15,6 +15,10 @@ export interface CatalogSet {
   code?: string
   name: string
   releaseDate?: string
+  image?: {
+    sourceUrl?: string
+    status: 'reference-only' | 'licensed' | 'unavailable'
+  }
 }
 
 export interface CatalogCard {

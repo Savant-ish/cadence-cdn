@@ -69,6 +69,10 @@ export async function mapPokemon(
     if (!externalId || !name)
       throw new Error('tcgjson set is missing setId or name')
     const code = optionalText(item.abbreviation) ?? optionalText(item.code)
+    const iconUrl = optionalText(item.iconUrl)
+    const releaseDate = optionalText(
+      item.publishedOn ?? item.releaseDate,
+    )?.slice(0, 10)
     // Names are the durable key: tcgjson abbreviations are not unique (for example, PR).
     const identity = createIdentity('set', 'pokemon', name)
     setByExternalId.set(externalId, {
@@ -76,9 +80,10 @@ export async function mapPokemon(
       gameId: game.id,
       ...(code ? { code } : {}),
       name,
-      ...((item.publishedOn ?? item.releaseDate)
-        ? { releaseDate: item.publishedOn ?? item.releaseDate }
-        : {}),
+      ...(releaseDate ? { releaseDate } : {}),
+      image: iconUrl
+        ? { sourceUrl: iconUrl, status: 'reference-only' as const }
+        : { status: 'unavailable' as const },
     })
   }
 

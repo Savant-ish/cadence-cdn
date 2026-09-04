@@ -6,13 +6,15 @@
       "setId": 100,
       "name": "Base Set",
       "abbreviation": "BS",
-      "publishedOn": "1999-01-09"
+      "publishedOn": "1999-01-09",
+      "iconUrl": "https://tcgplayer-cdn.tcgplayer.com/set_icon/100BaseSet.png"
     },
     {
       "setId": 200,
       "name": "Jungle",
       "abbreviation": "JU",
-      "publishedOn": "1999-06-16"
+      "publishedOn": "1999-06-16",
+      "iconUrl": "https://tcgplayer-cdn.tcgplayer.com/set_icon/200Jungle.png"
     }
   ],
   "products": [

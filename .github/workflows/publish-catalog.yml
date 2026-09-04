@@ -87,8 +87,9 @@ jobs:
           archive="cadence-catalog-${release_id}.tar.gz"
           tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner --create --gzip --file "$archive" --directory dist .
           npm run catalog:package-release -- --manifest dist/manifest.json --release-file "$SNAPSHOT_DIR/release.json" --archive "$archive" --output release-assets --repository "${{ github.repository }}"
+          release_tag=$(node -p "JSON.parse(require('fs').readFileSync('release-assets/latest.json', 'utf8')).tag")
           echo "RELEASE_ID=$release_id" >> "$GITHUB_ENV"
-          echo "RELEASE_TAG=catalog-$release_id" >> "$GITHUB_ENV"
+          echo "RELEASE_TAG=$release_tag" >> "$GITHUB_ENV"
 
       - name: Check for existing publication
         id: existing

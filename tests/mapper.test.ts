@@ -26,6 +26,13 @@ test('maps Pokemon while keeping cards distinct from printings', async () => {
   )
   assert.equal(catalog.printings[0]?.image?.status === 'licensed', false)
   assert.ok(
+    catalog.sets.every(
+      (item) =>
+        item.image?.status === 'reference-only' &&
+        item.image.sourceUrl?.includes('/set_icon/'),
+    ),
+  )
+  assert.ok(
     catalog.printings.every((item) => item.provenance.provider === 'tcgjson'),
   )
 })

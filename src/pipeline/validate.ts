@@ -36,13 +36,26 @@ export function validateCatalog(catalog: NormalizedCatalog): ValidationReport {
       'printing-identity',
     ),
   )
-  for (const set of catalog.sets)
+  for (const set of catalog.sets) {
     if (!gameIds.has(set.gameId))
       issues.push({
         severity: 'error',
         code: 'missing-game',
         message: `${set.id} references ${set.gameId}`,
       })
+    if (!set.image?.sourceUrl)
+      issues.push({
+        severity: 'warning',
+        code: 'missing-set-image-reference',
+        message: `${set.id} lacks a source set image URL`,
+      })
+    if (set.image?.status === 'licensed')
+      issues.push({
+        severity: 'error',
+        code: 'unapproved-set-image-license',
+        message: `${set.id} marks a set image licensed without an approved source policy`,
+      })
+  }
   for (const card of catalog.cards)
     if (!gameIds.has(card.gameId))
       issues.push({
