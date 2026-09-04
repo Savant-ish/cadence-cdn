@@ -12,6 +12,7 @@
     "catalog:validate": "npm run build --silent && node build/src/cli.js validate",
     "catalog:verify-artifacts": "npm run build --silent && node build/src/cli.js verify-manifest",
     "catalog:package-release": "npm run build --silent && node build/src/cli.js package-release",
+    "catalog:publish-r2": "npm run build --silent && node build/src/cli.js publish-r2",
     "taxonomy:suggest": "npm run build --silent && node build/src/cli.js taxonomy-suggest",
     "taxonomy:report": "npm run build --silent && node build/src/cli.js taxonomy-report",
     "build": "tsc -p tsconfig.json",
@@ -22,6 +23,7 @@
     "verify": "npm run typecheck && npm run lint && npm run format:check && npm test"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1126.0",
     "@eslint/js": "^9.35.0",
     "@types/node": "^24.3.0",
     "eslint": "^9.35.0",

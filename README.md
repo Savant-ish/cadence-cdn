@@ -43,3 +43,10 @@ Each accepted source release and Cadence schema combination becomes an immutable
 - `https://github.com/Savant-ish/cadence-cdn/releases/latest/download/manifest.json`
 
 The pointer contains immutable asset URLs and the archive checksum. Existing release tags are never overwritten. A count-regression override is available only through the manual workflow input and remains visible in the workflow history.
+
+When R2 repository settings are present, the same workflow also publishes unpacked JSON to `catalog/builds/<build-id>/` and atomically updates `catalog/latest.json`. Configure these GitHub Actions settings:
+
+- Variables: `R2_CATALOG_BUCKET` (`cadence-catalog-public`) and `R2_PUBLIC_BASE_URL` (the bucket's production custom-domain URL).
+- Secrets: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY`.
+
+The R2 token should have Object Read & Write access only to the catalog bucket. Do not use the public development URL for production traffic, and do not expose the private originals bucket. See [architecture](docs/architecture.md) for the bucket boundaries and publication guarantees.

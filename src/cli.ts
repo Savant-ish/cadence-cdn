@@ -4,6 +4,7 @@ import { TcgjsonProvider } from './providers/tcgjson/client.js'
 import { buildCatalog } from './pipeline/ingest.js'
 import { verifyPublishedArtifacts } from './pipeline/verify-artifacts.js'
 import { createReleaseMetadata } from './pipeline/release-assets.js'
+import { publishCatalogToR2 } from './pipeline/r2-publish.js'
 import { loadSnapshot } from './providers/tcgjson/client.js'
 import {
   loadTaxonomy,
@@ -44,7 +45,7 @@ async function main(): Promise<void> {
   const parsed = args(process.argv.slice(2))
   if (parsed.flags.has('help') || !parsed.command) {
     console.log(
-      'Usage: catalog <fetch|build|validate|verify-manifest|package-release|taxonomy-suggest|taxonomy-report> [options]',
+      'Usage: catalog <fetch|build|validate|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report> [options]',
     )
     return
   }
@@ -68,6 +69,32 @@ async function main(): Promise<void> {
       textFlag(parsed.flags, 'repository'),
     )
     console.log('Prepared release metadata and checksums')
+    return
+  }
+  if (parsed.command === 'publish-r2') {
+    const result = await publishCatalogToR2({
+      root: resolve(textFlag(parsed.flags, 'root', 'dist')),
+      bucket: textFlag(parsed.flags, 'bucket'),
+      accountId: textFlag(
+        parsed.flags,
+        'account-id',
+        process.env.R2_ACCOUNT_ID,
+      ),
+      publicBaseUrl: textFlag(parsed.flags, 'public-base-url'),
+      accessKeyId: textFlag(
+        parsed.flags,
+        'access-key-id',
+        process.env.R2_ACCESS_KEY_ID,
+      ),
+      secretAccessKey: textFlag(
+        parsed.flags,
+        'secret-access-key',
+        process.env.R2_SECRET_ACCESS_KEY,
+      ),
+    })
+    console.log(
+      `Published build ${result.buildId}: ${result.uploaded} uploaded, ${result.skipped} unchanged`,
+    )
     return
   }
   const providerName = textFlag(parsed.flags, 'provider', 'tcgjson')

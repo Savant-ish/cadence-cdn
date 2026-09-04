@@ -115,6 +115,20 @@ jobs:
           --notes "Validated deterministic Pokémon catalog imported from tcgjson $RELEASE_ID. Images are reference-only."
           --latest
 
+      - name: Publish catalog to Cloudflare R2
+        if: vars.R2_CATALOG_BUCKET != '' && vars.R2_PUBLIC_BASE_URL != ''
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_CATALOG_BUCKET: ${{ vars.R2_CATALOG_BUCKET }}
+          R2_PUBLIC_BASE_URL: ${{ vars.R2_PUBLIC_BASE_URL }}
+        run: >-
+          npm run catalog:publish-r2 --
+          --root dist
+          --bucket "$R2_CATALOG_BUCKET"
+          --public-base-url "$R2_PUBLIC_BASE_URL"
+
       - uses: actions/upload-artifact@v6
         if: always()
         with:
