@@ -40,7 +40,7 @@ npm run catalog:publish-r2 -- \
   --public-base-url https://cdn.cadencetcg.dev
 ```
 
-The command reads `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` from the environment. Do not place credential values in shell history. Publication is idempotent for an identical build and refuses conflicting immutable objects. Before moving the pointer, it fetches every build object through the public hostname and verifies exact bytes and SHA-256; this catches storage/CDN delivery failures that an authenticated R2 `HEAD` cannot detect.
+The command reads `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` from the environment. Do not place credential values in shell history. Publication is idempotent for an identical build and refuses conflicting immutable objects. Before moving the pointer, it fetches every build object through the public hostname with four-way bounded concurrency, retries, and a two-minute per-attempt timeout, then verifies exact bytes and SHA-256. This catches storage/CDN delivery failures that an authenticated R2 `HEAD` cannot detect without overwhelming cold origin delivery.
 
 ## Verification and recovery
 

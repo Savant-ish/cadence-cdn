@@ -54,7 +54,7 @@ async function verifyPublicObjects(
       await store.verifyPublic!(object.key, object)
     }
   }
-  await Promise.all(Array.from({ length: Math.min(8, objects.length) }, worker))
+  await Promise.all(Array.from({ length: Math.min(4, objects.length) }, worker))
 }
 
 async function filesUnder(root: string, directory = root): Promise<string[]> {
@@ -187,7 +187,7 @@ export async function publishCatalogToR2(
       for (let attempt = 1; attempt <= 4; attempt += 1) {
         try {
           const response = await fetch(`${baseUrl}/${key}`, {
-            signal: AbortSignal.timeout(60_000),
+            signal: AbortSignal.timeout(120_000),
           })
           if (!response.ok)
             throw new Error(`HTTP ${response.status} ${response.statusText}`)
