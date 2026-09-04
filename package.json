@@ -10,6 +10,8 @@
     "catalog:fetch": "npm run build --silent && node build/src/cli.js fetch",
     "catalog:build": "npm run build --silent && node build/src/cli.js build",
     "catalog:validate": "npm run build --silent && node build/src/cli.js validate",
+    "catalog:verify-artifacts": "npm run build --silent && node build/src/cli.js verify-manifest",
+    "catalog:package-release": "npm run build --silent && node build/src/cli.js package-release",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",

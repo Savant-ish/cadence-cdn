@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { resolve, join } from 'node:path'
-import { readFile } from 'node:fs/promises'
 import { TcgjsonProvider } from './providers/tcgjson/client.js'
 import { buildCatalog } from './pipeline/ingest.js'
+import { verifyPublishedArtifacts } from './pipeline/verify-artifacts.js'
+import { createReleaseMetadata } from './pipeline/release-assets.js'
 
 function args(tokens: string[]): {
   command?: string
@@ -37,8 +38,30 @@ async function main(): Promise<void> {
   const parsed = args(process.argv.slice(2))
   if (parsed.flags.has('help') || !parsed.command) {
     console.log(
-      'Usage: catalog <fetch|build|validate> [--provider tcgjson] [--game pokemon] [options]',
+      'Usage: catalog <fetch|build|validate|verify-manifest|package-release> [options]',
     )
+    return
+  }
+  if (parsed.command === 'verify-manifest') {
+    const manifest = resolve(
+      textFlag(parsed.flags, 'manifest', 'dist/manifest.json'),
+    )
+    const count = await verifyPublishedArtifacts(
+      manifest,
+      resolve(textFlag(parsed.flags, 'root', join(manifest, '..'))),
+    )
+    console.log(`Verified ${count} published artifacts`)
+    return
+  }
+  if (parsed.command === 'package-release') {
+    await createReleaseMetadata(
+      resolve(textFlag(parsed.flags, 'manifest', 'dist/manifest.json')),
+      resolve(textFlag(parsed.flags, 'release-file')),
+      resolve(textFlag(parsed.flags, 'archive')),
+      resolve(textFlag(parsed.flags, 'output', 'release-assets')),
+      textFlag(parsed.flags, 'repository'),
+    )
+    console.log('Prepared release metadata and checksums')
     return
   }
   const providerName = textFlag(parsed.flags, 'provider', 'tcgjson')
@@ -91,10 +114,6 @@ async function main(): Promise<void> {
     console.log(
       `Valid: ${report.counts.sets} sets, ${report.counts.cards} cards, ${report.counts.printings} printings; ${report.issues.filter((item) => item.severity === 'warning').length} warnings`,
     )
-    return
-  }
-  if (parsed.command === 'verify-manifest') {
-    JSON.parse(await readFile(textFlag(parsed.flags, 'manifest'), 'utf8'))
     return
   }
   throw new Error(`Unknown command: ${parsed.command}`)

@@ -1,0 +1,126 @@
+name: Publish catalog
+
+on:
+  schedule:
+    - cron: '30 8 * * 1'
+  workflow_dispatch:
+    inputs:
+      release:
+        description: tcgjson release tag or latest
+        required: true
+        default: latest
+        type: string
+      allow_count_drop:
+        description: Allow a record-count drop greater than 10 percent
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-catalog
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SNAPSHOT_DIR: snapshots/tcgjson/current/pokemon
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+
+      - name: Fetch source snapshot
+        env:
+          REQUESTED_RELEASE: ${{ inputs.release || 'latest' }}
+        run: >-
+          npm run catalog:fetch --
+          --provider tcgjson
+          --game pokemon
+          --release "$REQUESTED_RELEASE"
+          --output "$SNAPSHOT_DIR"
+
+      - name: Download previous accepted manifest
+        id: previous
+        env:
+          LATEST_MANIFEST: https://github.com/${{ github.repository }}/releases/latest/download/manifest.json
+        run: |
+          if curl --fail --location --silent --show-error "$LATEST_MANIFEST" --output previous-manifest.json; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No previous manifest is available; this will be the first publication."
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build catalog
+        env:
+          PREVIOUS_AVAILABLE: ${{ steps.previous.outputs.available }}
+          ALLOW_COUNT_DROP: ${{ inputs.allow_count_drop || false }}
+        run: |
+          args=(--provider tcgjson --game pokemon --snapshot "$SNAPSHOT_DIR/catalog.json" --release-file "$SNAPSHOT_DIR/release.json" --output dist)
+          if [[ "$PREVIOUS_AVAILABLE" == "true" && "$ALLOW_COUNT_DROP" != "true" ]]; then
+            args+=(--previous-manifest previous-manifest.json)
+          fi
+          if [[ "$ALLOW_COUNT_DROP" == "true" ]]; then
+            args+=(--allow-count-drop)
+          fi
+          npm run catalog:build -- "${args[@]}"
+          npm run catalog:verify-artifacts -- --manifest dist/manifest.json --root dist
+
+      - name: Prove deterministic output
+        run: |
+          cp -a dist dist-first
+          npm run catalog:build -- --provider tcgjson --game pokemon --snapshot "$SNAPSHOT_DIR/catalog.json" --release-file "$SNAPSHOT_DIR/release.json" --output dist-repeat
+          diff --recursive --brief dist-first dist-repeat
+
+      - name: Package release assets
+        run: |
+          release_id=$(node -p "JSON.parse(require('fs').readFileSync('$SNAPSHOT_DIR/release.json', 'utf8')).id")
+          archive="cadence-catalog-${release_id}.tar.gz"
+          tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner --create --gzip --file "$archive" --directory dist .
+          npm run catalog:package-release -- --manifest dist/manifest.json --release-file "$SNAPSHOT_DIR/release.json" --archive "$archive" --output release-assets --repository "${{ github.repository }}"
+          echo "RELEASE_ID=$release_id" >> "$GITHUB_ENV"
+          echo "RELEASE_TAG=catalog-$release_id" >> "$GITHUB_ENV"
+
+      - name: Check for existing publication
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release $RELEASE_TAG already exists; verified build will not overwrite it."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish immutable catalog release
+        if: steps.existing.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$RELEASE_TAG"
+          release-assets/*
+          --target "$GITHUB_SHA"
+          --title "Cadence catalog $RELEASE_ID"
+          --notes "Validated deterministic Pokémon catalog imported from tcgjson $RELEASE_ID. Images are reference-only."
+          --latest
+
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: catalog-publication-${{ github.run_id }}
+          path: |
+            dist/manifest.json
+            dist/import-report.json
+            release-assets/
+          if-no-files-found: warn
+          retention-days: 14
