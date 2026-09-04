@@ -7,4 +7,4 @@
 - Card and set images: URL metadata only, always `reference-only` or `unavailable`
 - Redistribution: dataset and artwork rights require separate review; this repository makes no grant or legal conclusion
 
-The image pipeline is absent and therefore disabled. No card images may be downloaded or published by this MVP.
+The provider-image acquisition pipeline is absent and therefore disabled. The presence of public and private R2 asset buckets does not authorize mirroring: no provider card or set images may be downloaded or published by this MVP. Future legally sourced originals follow [the owned image lifecycle](../image-assets.md) and require a separate approved source policy before any record can use `licensed` status.

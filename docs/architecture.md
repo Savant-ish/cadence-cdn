@@ -1,21 +1,52 @@
 # Architecture
 
-The pipeline has four boundaries: a provider resolves and fetches immutable source snapshots; an adapter maps provider fields to the Cadence domain; validation rejects unsafe catalogs; and the publisher emits provider-neutral artifacts. Only the adapter imports `tcgjson` types.
+## Pipeline boundaries
 
-Raw downloads live under ignored `snapshots/`. `dist/` is generated and ignored. Publication should copy a completed `dist/` tree to versioned object storage only after validation succeeds.
+The system separates provider acquisition, provider-specific mapping, Cadence validation, deterministic artifact generation, and publication. Only code under `src/providers/tcgjson/` understands `tcgjson` shapes. Downstream consumers receive only Cadence records.
 
-## R2 publication
+```text
+tcgjson release manifest
+  -> verified ignored snapshot
+  -> Pokemon adapter
+  -> Cadence games / sets / cards / printings
+  -> validation and taxonomy application
+  -> deterministic dist tree and manifest
+  -> GitHub Release + Cloudflare R2
+  -> cadence-web
+```
 
-Cloudflare R2 is the primary unpacked catalog origin while GitHub Releases remain an independent archive and recovery path. A publication writes the complete verified tree beneath `catalog/builds/<build-id>/` with a one-year immutable cache policy. It verifies each upload and writes `catalog/latest.json` last with a 60-second cache policy. Existing immutable keys may be reused only when their SHA-256 metadata matches; a conflicting object aborts publication.
+Raw downloads live under ignored `snapshots/`. Generated `dist/`, `build/`, and `release-assets/` trees are also ignored. Only source, schemas, curated configuration, small fixtures, tests, and documentation belong in Git.
 
-Use separate buckets for each security and lifecycle boundary:
+## Identity and domain model
 
-- `cadence-catalog-public` for normalized catalog JSON.
-- `cadence-assets-public` for legally approved, public derivative assets.
-- `cadence-assets-originals` for private owned source captures. Never connect this bucket to a public domain.
+A card is a conceptual identity; a printing is the set-, number-, language-, and variant-specific inventory identity. Provider IDs remain external cross-references. Identity normalization is versioned as `v1`, and consumers must use opaque `id` values rather than reconstructing them from `identityKey`.
 
-Provider image URLs remain reference metadata. The R2 publisher does not fetch or mirror them.
+Published IDs must never be reinterpreted. A future normalization change requires a new identity version plus aliases or a migration map.
 
-For production, connect the two public buckets to custom domains. Cloudflare's `r2.dev` endpoint is rate-limited and intended only for development. Scope the catalog CI credential to Object Read & Write on `cadence-catalog-public` only; asset ingestion should use separate credentials.
+## Artifact generation
 
-Identity normalization is versioned as `v1`. Published identifiers must never be reinterpreted. A future normalization change requires a new version and an alias or migration map.
+Each build emits `games.json`, a game index, game-level sets/cards/printings files, per-set files, `import-report.json`, and `manifest.json`. Artifact JSON is stably sorted and serialized. The 16-character build ID is derived from the ordered artifact descriptors, and the manifest records every consumer artifact's path, byte length, record count, and SHA-256 digest.
+
+The build fails for invalid catalogs. Warnings—including missing optional values and unclassified sets—remain visible in `import-report.json`. A previous manifest can enforce the default 10% count-regression limit.
+
+## Publication topology
+
+Cloudflare R2 is the primary unpacked origin. GitHub Releases provide immutable archives, checksums, release metadata, and a separate recovery path.
+
+| Resource                   | Exposure                     | Purpose                              |
+| -------------------------- | ---------------------------- | ------------------------------------ |
+| `cadence-catalog-public`   | `https://cdn.cadencetcg.dev` | Normalized catalog JSON              |
+| `cadence-assets-public`    | No domain yet                | Future approved public derivatives   |
+| `cadence-assets-originals` | Private                      | Future legally owned source captures |
+
+All Cloudflare-managed `r2.dev` endpoints are disabled. The catalog hostname requires TLS 1.2 or newer. Its CORS policy permits public `GET` and `HEAD` requests and exposes ETag, length, type, and cache-control headers.
+
+R2 publication writes the complete tree under `catalog/builds/<build-id>/` with `public, max-age=31536000, immutable`. Every object stores its SHA-256 digest as R2 metadata and is verified with `HEAD`. An existing immutable key is accepted only if its digest matches; a conflict aborts publication. The publisher then writes `catalog/latest.json` last with `public, max-age=60, must-revalidate`.
+
+The GitHub Actions credential is an account token scoped to Object Read & Write on `cadence-catalog-public` only. Asset pipelines must use distinct credentials. See [R2 operations](r2-operations.md).
+
+## Image and taxonomy policy
+
+Provider card and set URLs are descriptive references, never mirrored assets. The validator rejects `licensed` status because no approved image source policy exists yet. Owned originals and public derivatives will use separate storage and an explicit provenance/approval process described in [image assets](image-assets.md).
+
+Pokemon era and set-kind data is curated configuration. Suggestions are non-authoritative and pending assignments are omitted from published set records. See [taxonomy administration](taxonomy-admin.md).

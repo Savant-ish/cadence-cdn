@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://catalog.cadence.example/schemas/catalog-1.2.0.json",
+  "$id": "https://raw.githubusercontent.com/Savant-ish/cadence-cdn/main/schemas/catalog.schema.json",
   "title": "Cadence catalog",
   "type": "object",
   "required": ["games", "sets", "cards", "printings"],
