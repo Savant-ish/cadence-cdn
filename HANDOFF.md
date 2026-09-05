@@ -15,6 +15,7 @@ The current public schema is `1.2.0`; identity normalization is `v1`. Consumers 
 - Conceptual-card and printing separation; inventory should reference printing IDs.
 - Source provenance and external-ID crosswalks.
 - Set and printing image-reference metadata with explicit policy status.
+- Conservative exclusion of digital Pokemon code-card listings.
 - Set image URL extraction from catalog metadata.
 - Curated Pokemon era/set-kind taxonomy queue and reporting tools.
 - Deterministic per-game, aggregate, and per-set artifacts.

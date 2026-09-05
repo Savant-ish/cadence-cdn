@@ -5,6 +5,9 @@
 - Upstream basis: TCGplayer public catalog/search endpoints
 - Retention: keep release ID, source URL when present, TCGplayer product ID as an external ID, and deterministic import time
 - Card and set images: URL metadata only, always `reference-only` or `unavailable`
+- Product filtering: exclude Pokemon listings whose normalized name begins `Code Card -` or whose source rarity is `Code Card`
 - Redistribution: dataset and artwork rights require separate review; this repository makes no grant or legal conclusion
 
 The provider-image acquisition pipeline is absent and therefore disabled. The presence of public and private R2 asset buckets does not authorize mirroring: no provider card or set images may be downloaded or published by this MVP. Future legally sourced originals follow [the owned image lifecycle](../image-assets.md) and require a separate approved source policy before any record can use `licensed` status.
+
+The code-card rule deliberately uses structured rarity and anchored-name signals. Do not filter arbitrary occurrences of the word `code`: legitimate card rules and flavor text can contain it. Filtering happens before conceptual cards, printings, and Cadence IDs are created. A source set that originally contains products but has no products after this filter is also omitted; unrelated upstream sets that arrived empty are preserved as source catalog records.

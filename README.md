@@ -2,6 +2,8 @@
 
 Provider-neutral catalog ingestion and deterministic publishing for Cadence. The MVP imports Pokemon singles from a pinned `tcgjson` snapshot and publishes Cadence-owned games, sets, cards, and printings.
 
+Digital Pokemon code-card listings are intentionally excluded at the provider boundary; this catalog models collectible physical card printings.
+
 Production catalog: <https://cdn.cadencetcg.dev/catalog/latest.json>
 
 ## Requirements

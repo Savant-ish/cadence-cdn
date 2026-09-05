@@ -10,6 +10,7 @@ import {
   normalizeComponent,
 } from '../../identity/cadence-id.js'
 import { parseCatalog } from './types.js'
+import type { TcgjsonProduct } from './types.js'
 
 function optionalText(value: unknown): string | undefined {
   if (typeof value === 'string' && value.trim()) return value.trim()
@@ -51,6 +52,17 @@ function attribute(
   return undefined
 }
 
+export function isPokemonCodeCard(product: TcgjsonProduct): boolean {
+  const name = optionalText(product.cleanName) ?? optionalText(product.name)
+  const attrs = customAttributes(product.metadata)
+  const rarity =
+    optionalText(product.rarity) ?? attribute(attrs, 'rarityDbName', 'rarity')
+  return (
+    /^code card(?:\s*-|$)/i.test(name ?? '') ||
+    rarity?.toLowerCase() === 'code card'
+  )
+}
+
 export async function mapPokemon(
   input: unknown,
   context: ImportContext,
@@ -58,9 +70,29 @@ export async function mapPokemon(
   const source = parseCatalog(input)
   const gameIdentity = createIdentity('game', 'pokemon')
   const game = { ...gameIdentity, slug: 'pokemon', name: 'Pokémon' }
-  const sourceSets = [...source.sets].sort((a, b) =>
-    String(a.setId).localeCompare(String(b.setId)),
+  const retainedProducts = source.products.filter(
+    (product) => !isPokemonCodeCard(product),
   )
+  const sourceSetsWithProducts = new Set(
+    source.products
+      .map((product) => optionalText(product.setId ?? product.groupId))
+      .filter((value): value is string => Boolean(value)),
+  )
+  const retainedSetIds = new Set(
+    retainedProducts
+      .map((product) => optionalText(product.setId ?? product.groupId))
+      .filter((value): value is string => Boolean(value)),
+  )
+  const sourceSets = source.sets
+    .filter((set) => {
+      const externalId = optionalText(set.setId)
+      return (
+        !externalId ||
+        !sourceSetsWithProducts.has(externalId) ||
+        retainedSetIds.has(externalId)
+      )
+    })
+    .sort((a, b) => String(a.setId).localeCompare(String(b.setId)))
   const setByExternalId = new Map<string, CatalogSet>()
 
   for (const item of sourceSets) {
@@ -88,7 +120,7 @@ export async function mapPokemon(
   }
 
   const cards = new Map<string, CatalogCard>()
-  const printings = [...source.products]
+  const printings = retainedProducts
     .sort((a, b) => String(a.productId).localeCompare(String(b.productId)))
     .map((product) => {
       const externalId = optionalText(product.productId)
