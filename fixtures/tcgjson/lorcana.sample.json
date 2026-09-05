@@ -1,0 +1,35 @@
+{
+  "name": "Disney Lorcana",
+  "slug": "lorcana",
+  "sets": [
+    {
+      "setId": 1001,
+      "name": "The First Chapter",
+      "abbreviation": "1",
+      "releaseDate": "2023-08-18",
+      "iconUrl": "https://tcgplayer-cdn.tcgplayer.com/set_icon/1001.png"
+    }
+  ],
+  "products": [
+    {
+      "productId": 5001,
+      "name": "Mickey Mouse - Brave Little Tailor",
+      "setId": 1001,
+      "collectorNumber": "186/204",
+      "rarity": "Legendary",
+      "productTypeName": "Character",
+      "foilings": ["Normal", "Holofoil"],
+      "imageUrls": [
+        "https://tcgplayer-cdn.tcgplayer.com/product/5001_in_1000x1000.jpg"
+      ]
+    },
+    {
+      "productId": 5002,
+      "name": "Just in Time",
+      "setId": 1001,
+      "rarity": "Rare",
+      "productTypeName": "Action",
+      "foilings": ["Normal"]
+    }
+  ]
+}

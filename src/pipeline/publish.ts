@@ -56,41 +56,48 @@ export async function publishCatalog(
     artifacts.push({ path: relative.replaceAll('\\', '/'), ...result, records })
   }
   await emit('games.json', catalog.games, catalog.games.length)
-  const gameRoot = 'games/pokemon'
-  await emit(`${gameRoot}/sets.json`, catalog.sets, catalog.sets.length)
-  await emit(`${gameRoot}/cards.json`, catalog.cards, catalog.cards.length)
-  await emit(
-    `${gameRoot}/printings.json`,
-    catalog.printings,
-    catalog.printings.length,
-  )
-  for (const set of catalog.sets) {
-    const printings = catalog.printings.filter((item) => item.setId === set.id)
-    const cardIds = new Set(printings.map((item) => item.cardId))
-    const fileId = set.id.replaceAll(':', '_')
+  for (const game of catalog.games) {
+    const gameRoot = `games/${game.slug}`
+    const sets = catalog.sets.filter((item) => item.gameId === game.id)
+    const setIds = new Set(sets.map((item) => item.id))
+    const cards = catalog.cards.filter((item) => item.gameId === game.id)
+    const printings = catalog.printings.filter((item) => setIds.has(item.setId))
+    await emit(`${gameRoot}/sets.json`, sets, sets.length)
+    await emit(`${gameRoot}/cards.json`, cards, cards.length)
+    await emit(`${gameRoot}/printings.json`, printings, printings.length)
+    for (const set of sets) {
+      const setPrintings = printings.filter((item) => item.setId === set.id)
+      const cardIds = new Set(setPrintings.map((item) => item.cardId))
+      const fileId = set.id.replaceAll(':', '_')
+      await emit(
+        `${gameRoot}/sets/${fileId}.json`,
+        {
+          set,
+          cards: cards.filter((item) => cardIds.has(item.id)),
+          printings: setPrintings,
+        },
+        setPrintings.length,
+      )
+    }
     await emit(
-      `${gameRoot}/sets/${fileId}.json`,
+      `${gameRoot}/index.json`,
       {
-        set,
-        cards: catalog.cards.filter((item) => cardIds.has(item.id)),
-        printings,
+        game,
+        artifacts: {
+          sets: 'sets.json',
+          cards: 'cards.json',
+          printings: 'printings.json',
+        },
+        counts: {
+          games: 1,
+          sets: sets.length,
+          cards: cards.length,
+          printings: printings.length,
+        },
       },
-      printings.length,
+      1,
     )
   }
-  await emit(
-    `${gameRoot}/index.json`,
-    {
-      game: catalog.games[0],
-      artifacts: {
-        sets: 'sets.json',
-        cards: 'cards.json',
-        printings: 'printings.json',
-      },
-      counts: report.counts,
-    },
-    1,
-  )
   artifacts.sort((a, b) => a.path.localeCompare(b.path))
   const importReport = await writeJson(
     join(output, 'import-report.json'),
@@ -105,7 +112,7 @@ export async function publishCatalog(
       release: release.id,
       manifestUrl: release.manifestUrl,
     },
-    supportedGames: ['pokemon'],
+    supportedGames: catalog.games.map((game) => game.slug).sort(),
     counts: report.counts,
     artifacts,
     operationalArtifacts: [{ path: 'import-report.json', ...importReport }],

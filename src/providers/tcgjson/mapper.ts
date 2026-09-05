@@ -67,11 +67,37 @@ export async function mapPokemon(
   input: unknown,
   context: ImportContext,
 ): Promise<NormalizedCatalog> {
+  return mapTcgjsonGame(input, context, {
+    slug: 'pokemon',
+    name: 'Pokémon',
+    excludeProduct: isPokemonCodeCard,
+  })
+}
+
+export async function mapLorcana(
+  input: unknown,
+  context: ImportContext,
+): Promise<NormalizedCatalog> {
+  return mapTcgjsonGame(input, context, {
+    slug: 'lorcana',
+    name: 'Disney Lorcana',
+  })
+}
+
+async function mapTcgjsonGame(
+  input: unknown,
+  context: ImportContext,
+  options: {
+    slug: string
+    name: string
+    excludeProduct?: (product: TcgjsonProduct) => boolean
+  },
+): Promise<NormalizedCatalog> {
   const source = parseCatalog(input)
-  const gameIdentity = createIdentity('game', 'pokemon')
-  const game = { ...gameIdentity, slug: 'pokemon', name: 'Pokémon' }
+  const gameIdentity = createIdentity('game', options.slug)
+  const game = { ...gameIdentity, slug: options.slug, name: options.name }
   const retainedProducts = source.products.filter(
-    (product) => !isPokemonCodeCard(product),
+    (product) => !options.excludeProduct?.(product),
   )
   const sourceSetsWithProducts = new Set(
     source.products
@@ -106,7 +132,7 @@ export async function mapPokemon(
       item.publishedOn ?? item.releaseDate,
     )?.slice(0, 10)
     // Names are the durable key: tcgjson abbreviations are not unique (for example, PR).
-    const identity = createIdentity('set', 'pokemon', name)
+    const identity = createIdentity('set', options.slug, name)
     setByExternalId.set(externalId, {
       ...identity,
       gameId: game.id,
@@ -139,7 +165,7 @@ export async function mapPokemon(
         )
       }
       const normalizedName = normalizeComponent(name)
-      const cardIdentity = createIdentity('card', 'pokemon', normalizedName)
+      const cardIdentity = createIdentity('card', options.slug, normalizedName)
       if (!cards.has(cardIdentity.id)) {
         const cardType =
           optionalText(product.productTypeName) ??
@@ -164,7 +190,7 @@ export async function mapPokemon(
       const variant = [finish, edition].filter(Boolean).join('-') || 'standard'
       const printingIdentity = createIdentity(
         'printing',
-        'pokemon',
+        options.slug,
         set.identityKey,
         normalizedName,
         collectorNumber

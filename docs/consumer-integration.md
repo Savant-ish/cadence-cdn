@@ -27,7 +27,9 @@ A partial download, malformed JSON, checksum mismatch, unsupported schema, or fa
 - A conceptual card ID is not a printing or SKU identity.
 - Provider IDs may be retained only for reconciliation and outbound links.
 - Treat `identityKey` as diagnostic data. Do not parse it or recreate IDs.
-- Code should remain game-neutral even though only Pokemon is published today.
+- Code must remain game-neutral and use `supportedGames` plus `games.json` for discovery.
+
+Sealed inventory must not reference card-printing IDs. A later sealed catalog will define its own product and configuration identities without changing the card identity contract.
 
 ## Image and taxonomy behavior
 

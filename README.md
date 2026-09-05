@@ -1,8 +1,8 @@
 # Cadence CDN
 
-Provider-neutral catalog ingestion and deterministic publishing for Cadence. The MVP imports Pokemon singles from a pinned `tcgjson` snapshot and publishes Cadence-owned games, sets, cards, and printings.
+Provider-neutral catalog ingestion and deterministic publishing for Cadence. The catalog imports Pokémon and Disney Lorcana cards from pinned `tcgjson` snapshots and publishes Cadence-owned games, sets, cards, and printings.
 
-Digital Pokemon code-card listings are intentionally excluded at the provider boundary; this catalog models collectible physical card printings.
+Digital Pokémon code-card listings are intentionally excluded at the provider boundary. Sealed products will use a separate domain and are not mixed into card or printing records.
 
 Production catalog: <https://cdn.cadencetcg.dev/catalog/latest.json>
 
@@ -15,7 +15,8 @@ Node.js 22 or newer.
 ```sh
 npm ci
 npm run catalog:fetch -- --provider tcgjson --game pokemon --release latest
-npm run catalog:build -- --provider tcgjson --game pokemon --snapshot snapshots/tcgjson/<release>/pokemon/catalog.json
+npm run catalog:fetch -- --provider tcgjson --game lorcana --release latest
+npm run catalog:build -- --provider tcgjson --games pokemon,lorcana --snapshot-root snapshots/tcgjson/current
 npm run catalog:validate -- --snapshot snapshots/tcgjson/<release>/pokemon/catalog.json
 npm run catalog:verify-artifacts -- --manifest dist/manifest.json --root dist
 npm run taxonomy:report -- --snapshot snapshots/tcgjson/<release>/pokemon/catalog.json
@@ -48,7 +49,7 @@ Cloudflare storage is divided into a public catalog bucket, a reserved public de
 
 CI verifies every push and pull request. The `Publish catalog` workflow runs each Monday at 08:30 UTC and can be dispatched manually with either `latest` or a pinned `tcgjson` release. It checks upstream size and SHA-256 metadata, rejects large record-count regressions, verifies every generated artifact, and rebuilds into a second directory to prove determinism.
 
-Each accepted source release and Cadence schema combination becomes an immutable GitHub Release named `catalog-v<schema-version>-<provider-release>`. Consumers can use GitHub as a recovery source:
+Each accepted build becomes an immutable GitHub Release named `catalog-v<schema-version>-<provider-release>-<build-id>`. Consumers can use GitHub as a recovery source:
 
 - `https://github.com/Savant-ish/cadence-cdn/releases/latest/download/latest.json`
 - `https://github.com/Savant-ish/cadence-cdn/releases/latest/download/manifest.json`

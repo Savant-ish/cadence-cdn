@@ -8,7 +8,10 @@ import type {
   NormalizedCatalog,
   SourceRelease,
 } from '../../domain/catalog.js'
-import { mapPokemon } from './mapper.js'
+import { mapLorcana, mapPokemon } from './mapper.js'
+import { GAME_REGISTRY, isGameSlug, type GameSlug } from '../../config/games.js'
+
+export const TCGJSON_GAMES = Object.keys(GAME_REGISTRY) as GameSlug[]
 
 const MANIFEST_URL =
   'https://github.com/HanClinto/tcgjson/releases/latest/download/bulk-data.json'
@@ -68,7 +71,11 @@ function numberField(
 export class TcgjsonProvider implements CatalogProvider {
   readonly name = 'tcgjson'
 
-  async resolveRelease(requested = 'latest'): Promise<SourceRelease> {
+  async resolveRelease(
+    requested = 'latest',
+    game = 'pokemon',
+  ): Promise<SourceRelease> {
+    if (!isGameSlug(game)) throw new Error(`Unsupported tcgjson game: ${game}`)
     const manifestUrl =
       requested === 'latest'
         ? MANIFEST_URL
@@ -85,11 +92,11 @@ export class TcgjsonProvider implements CatalogProvider {
           'filename',
           'path',
         ) ?? ''
-      return /(^|\/)pokemon\.full\.json(\.gz)?$/i.test(name)
+      return new RegExp(`(^|/)${game}\\.full\\.json(\\.gz)?$`, 'i').test(name)
     })
     if (!entry)
       throw new Error(
-        'The tcgjson manifest does not contain pokemon.full.json or pokemon.full.json.gz',
+        `The tcgjson manifest does not contain ${game}.full.json or ${game}.full.json.gz`,
       )
     const artifactName = textField(
       entry,
@@ -147,7 +154,7 @@ export class TcgjsonProvider implements CatalogProvider {
     game: string,
     destination: string,
   ): Promise<string> {
-    if (game !== 'pokemon') throw new Error(`Unsupported tcgjson game: ${game}`)
+    if (!isGameSlug(game)) throw new Error(`Unsupported tcgjson game: ${game}`)
     const compressed = await download(release.artifactUrl)
     if (release.size !== undefined && compressed.length !== release.size) {
       throw new Error(
@@ -177,8 +184,11 @@ export class TcgjsonProvider implements CatalogProvider {
   async normalize(
     input: unknown,
     context: ImportContext,
+    game = 'pokemon',
   ): Promise<NormalizedCatalog> {
-    return mapPokemon(input, context)
+    if (game === 'pokemon') return mapPokemon(input, context)
+    if (game === 'lorcana') return mapLorcana(input, context)
+    throw new Error(`Unsupported tcgjson game: ${game}`)
   }
 }
 

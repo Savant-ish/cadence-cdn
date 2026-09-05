@@ -19,6 +19,11 @@ function duplicateIssues(values: string[], label: string): ValidationIssue[] {
 export function validateCatalog(catalog: NormalizedCatalog): ValidationReport {
   const issues: ValidationIssue[] = []
   const gameIds = new Set(catalog.games.map((item) => item.id))
+  const pokemonGameIds = new Set(
+    catalog.games
+      .filter((item) => item.slug === 'pokemon')
+      .map((item) => item.id),
+  )
   const setIds = new Set(catalog.sets.map((item) => item.id))
   const cardIds = new Set(catalog.cards.map((item) => item.id))
   issues.push(
@@ -55,7 +60,7 @@ export function validateCatalog(catalog: NormalizedCatalog): ValidationReport {
         code: 'unapproved-set-image-license',
         message: `${set.id} marks a set image licensed without an approved source policy`,
       })
-    if (!set.classification)
+    if (pokemonGameIds.has(set.gameId) && !set.classification)
       issues.push({
         severity: 'warning',
         code: 'unclassified-set',

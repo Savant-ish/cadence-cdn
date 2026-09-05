@@ -29,7 +29,7 @@ export async function createReleaseMetadata(
     throw new Error('Repository must use owner/name syntax')
   const archive = await readFile(archivePath)
   const archiveName = basename(archivePath)
-  const tag = `catalog-v${manifest.schemaVersion}-${release.id}`
+  const tag = `catalog-v${manifest.schemaVersion}-${release.id}-${manifest.buildId}`
   const baseUrl = `https://github.com/${repository}/releases/download/${tag}`
   await mkdir(output, { recursive: true })
   const copiedManifest = join(output, 'manifest.json')

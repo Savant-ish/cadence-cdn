@@ -25,6 +25,11 @@ games/pokemon/sets.json
 games/pokemon/cards.json
 games/pokemon/printings.json
 games/pokemon/sets/<cadence-set-id>.json
+games/lorcana/index.json
+games/lorcana/sets.json
+games/lorcana/cards.json
+games/lorcana/printings.json
+games/lorcana/sets/<cadence-set-id>.json
 ```
 
 The filename form of a set ID replaces `:` with `_`. Consumers should not derive this filename; use paths declared by `manifest.artifacts` or the game index.

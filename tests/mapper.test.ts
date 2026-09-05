@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readJson } from '../src/util/json.js'
 import {
   isPokemonCodeCard,
+  mapLorcana,
   mapPokemon,
 } from '../src/providers/tcgjson/mapper.js'
 
@@ -37,6 +38,35 @@ test('maps Pokemon while keeping cards distinct from printings', async () => {
   )
   assert.ok(
     catalog.printings.every((item) => item.provenance.provider === 'tcgjson'),
+  )
+})
+
+test('maps Disney Lorcana as an independent game catalog', async () => {
+  const input = await readJson('fixtures/tcgjson/lorcana.sample.json')
+  const catalog = await mapLorcana(input, {
+    release: {
+      provider: 'tcgjson',
+      id: 'fixture',
+      manifestUrl: 'fixture://manifest',
+      artifactUrl: 'fixture://lorcana',
+      artifactName: 'lorcana.json',
+    },
+    importedAt: '2026-09-01T00:00:00.000Z',
+  })
+  assert.equal(catalog.games[0]?.slug, 'lorcana')
+  assert.deepEqual(
+    {
+      sets: catalog.sets.length,
+      cards: catalog.cards.length,
+      printings: catalog.printings.length,
+    },
+    { sets: 1, cards: 2, printings: 2 },
+  )
+  assert.ok(catalog.cards.some((card) => card.cardType === 'Character'))
+  assert.ok(
+    catalog.printings.every((printing) =>
+      printing.identityKey.includes('lorcana'),
+    ),
   )
 })
 

@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      SNAPSHOT_DIR: snapshots/tcgjson/current/pokemon
+      SNAPSHOT_ROOT: snapshots/tcgjson/current
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v7
@@ -38,15 +38,13 @@ jobs:
       - run: npm ci
       - run: npm run verify
 
-      - name: Fetch source snapshot
+      - name: Fetch source snapshots
         env:
           REQUESTED_RELEASE: ${{ inputs.release || 'latest' }}
-        run: >-
-          npm run catalog:fetch --
-          --provider tcgjson
-          --game pokemon
-          --release "$REQUESTED_RELEASE"
-          --output "$SNAPSHOT_DIR"
+        run: |
+          for game in pokemon lorcana; do
+            npm run catalog:fetch -- --provider tcgjson --game "$game" --release "$REQUESTED_RELEASE" --output "$SNAPSHOT_ROOT/$game"
+          done
 
       - name: Download previous accepted manifest
         id: previous
@@ -65,7 +63,7 @@ jobs:
           PREVIOUS_AVAILABLE: ${{ steps.previous.outputs.available }}
           ALLOW_COUNT_DROP: ${{ inputs.allow_count_drop || false }}
         run: |
-          args=(--provider tcgjson --game pokemon --snapshot "$SNAPSHOT_DIR/catalog.json" --release-file "$SNAPSHOT_DIR/release.json" --output dist)
+          args=(--provider tcgjson --games pokemon,lorcana --snapshot-root "$SNAPSHOT_ROOT" --output dist)
           if [[ "$PREVIOUS_AVAILABLE" == "true" && "$ALLOW_COUNT_DROP" != "true" ]]; then
             args+=(--previous-manifest previous-manifest.json)
           fi
@@ -78,15 +76,15 @@ jobs:
       - name: Prove deterministic output
         run: |
           cp -a dist dist-first
-          npm run catalog:build -- --provider tcgjson --game pokemon --snapshot "$SNAPSHOT_DIR/catalog.json" --release-file "$SNAPSHOT_DIR/release.json" --output dist-repeat
+          npm run catalog:build -- --provider tcgjson --games pokemon,lorcana --snapshot-root "$SNAPSHOT_ROOT" --output dist-repeat
           diff --recursive --brief dist-first dist-repeat
 
       - name: Package release assets
         run: |
-          release_id=$(node -p "JSON.parse(require('fs').readFileSync('$SNAPSHOT_DIR/release.json', 'utf8')).id")
+          release_id=$(node -p "JSON.parse(require('fs').readFileSync('$SNAPSHOT_ROOT/pokemon/release.json', 'utf8')).id")
           archive="cadence-catalog-${release_id}.tar.gz"
           tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner --create --gzip --file "$archive" --directory dist .
-          npm run catalog:package-release -- --manifest dist/manifest.json --release-file "$SNAPSHOT_DIR/release.json" --archive "$archive" --output release-assets --repository "${{ github.repository }}"
+          npm run catalog:package-release -- --manifest dist/manifest.json --release-file "$SNAPSHOT_ROOT/pokemon/release.json" --archive "$archive" --output release-assets --repository "${{ github.repository }}"
           release_tag=$(node -p "JSON.parse(require('fs').readFileSync('release-assets/latest.json', 'utf8')).tag")
           echo "RELEASE_ID=$release_id" >> "$GITHUB_ENV"
           echo "RELEASE_TAG=$release_tag" >> "$GITHUB_ENV"
@@ -112,7 +110,7 @@ jobs:
           release-assets/*
           --target "$GITHUB_SHA"
           --title "Cadence catalog $RELEASE_ID"
-          --notes "Validated deterministic Pokémon catalog imported from tcgjson $RELEASE_ID. Images are reference-only."
+          --notes "Validated deterministic Pokémon and Disney Lorcana card catalog imported from tcgjson $RELEASE_ID. Images are reference-only. Sealed products are not included."
           --latest
 
       - name: Publish catalog to Cloudflare R2

@@ -6,11 +6,15 @@ import type {
 
 export interface CatalogProvider {
   readonly name: string
-  resolveRelease(release?: string): Promise<SourceRelease>
+  resolveRelease(release?: string, game?: string): Promise<SourceRelease>
   fetchGame(
     release: SourceRelease,
     game: string,
     destination: string,
   ): Promise<string>
-  normalize(input: unknown, context: ImportContext): Promise<NormalizedCatalog>
+  normalize(
+    input: unknown,
+    context: ImportContext,
+    game?: string,
+  ): Promise<NormalizedCatalog>
 }

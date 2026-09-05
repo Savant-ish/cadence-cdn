@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { resolve, join } from 'node:path'
 import { TcgjsonProvider } from './providers/tcgjson/client.js'
-import { buildCatalog } from './pipeline/ingest.js'
+import { buildCatalog, buildCatalogBundle } from './pipeline/ingest.js'
 import { verifyPublishedArtifacts } from './pipeline/verify-artifacts.js'
 import { createReleaseMetadata } from './pipeline/release-assets.js'
 import { publishCatalogToR2 } from './pipeline/r2-publish.js'
@@ -11,6 +11,7 @@ import {
   taxonomyReport,
   updateSuggestions,
 } from './taxonomy/pokemon.js'
+import { isGameSlug } from './config/games.js'
 
 function args(tokens: string[]): {
   command?: string
@@ -99,12 +100,14 @@ async function main(): Promise<void> {
   }
   const providerName = textFlag(parsed.flags, 'provider', 'tcgjson')
   const game = textFlag(parsed.flags, 'game', 'pokemon')
-  if (providerName !== 'tcgjson' || game !== 'pokemon')
-    throw new Error('MVP supports --provider tcgjson --game pokemon')
+  if (providerName !== 'tcgjson' || !isGameSlug(game))
+    throw new Error(`Unsupported provider/game: ${providerName}/${game}`)
   if (
     parsed.command === 'taxonomy-suggest' ||
     parsed.command === 'taxonomy-report'
   ) {
+    if (game !== 'pokemon')
+      throw new Error('Set taxonomy tooling currently supports Pokémon only')
     const snapshot = resolve(
       textFlag(
         parsed.flags,
@@ -139,6 +142,7 @@ async function main(): Promise<void> {
     const provider = new TcgjsonProvider()
     const release = await provider.resolveRelease(
       textFlag(parsed.flags, 'release', 'latest'),
+      game,
     )
     const destination = resolve(
       textFlag(
@@ -152,19 +156,15 @@ async function main(): Promise<void> {
     return
   }
   if (parsed.command === 'build' || parsed.command === 'validate') {
-    const snapshot = resolve(
-      textFlag(
-        parsed.flags,
-        'snapshot',
-        'fixtures/tcgjson/pokemon.sample.json',
-      ),
-    )
-    const report = await buildCatalog({
-      snapshot,
+    const games = parsed.flags.has('games')
+      ? textFlag(parsed.flags, 'games')
+          .split(',')
+          .map((item) => item.trim())
+      : []
+    for (const slug of games)
+      if (!isGameSlug(slug)) throw new Error(`Unsupported game: ${slug}`)
+    const shared = {
       output: resolve(textFlag(parsed.flags, 'output', 'dist')),
-      ...(parsed.flags.has('release-file')
-        ? { releaseFile: resolve(textFlag(parsed.flags, 'release-file')) }
-        : {}),
       ...(parsed.flags.has('imported-at')
         ? { importedAt: textFlag(parsed.flags, 'imported-at') }
         : {}),
@@ -181,6 +181,38 @@ async function main(): Promise<void> {
         textFlag(parsed.flags, 'taxonomy', 'config/taxonomy/pokemon-sets.json'),
       ),
       requireApprovedTaxonomy: parsed.flags.has('require-approved-taxonomy'),
+    }
+    if (games.length) {
+      const snapshotRoot = resolve(
+        textFlag(parsed.flags, 'snapshot-root', 'snapshots/tcgjson/current'),
+      )
+      const report = await buildCatalogBundle({
+        ...shared,
+        sources: games.map((slug) => ({
+          game: slug,
+          snapshot: join(snapshotRoot, slug, 'catalog.json'),
+          releaseFile: join(snapshotRoot, slug, 'release.json'),
+        })),
+      })
+      console.log(
+        `Valid: ${report.counts.games} games, ${report.counts.sets} sets, ${report.counts.cards} cards, ${report.counts.printings} printings; ${report.issues.filter((item) => item.severity === 'warning').length} warnings`,
+      )
+      return
+    }
+    const snapshot = resolve(
+      textFlag(
+        parsed.flags,
+        'snapshot',
+        'fixtures/tcgjson/pokemon.sample.json',
+      ),
+    )
+    const report = await buildCatalog({
+      snapshot,
+      game,
+      ...shared,
+      ...(parsed.flags.has('release-file')
+        ? { releaseFile: resolve(textFlag(parsed.flags, 'release-file')) }
+        : {}),
     })
     console.log(
       `Valid: ${report.counts.sets} sets, ${report.counts.cards} cards, ${report.counts.printings} printings; ${report.issues.filter((item) => item.severity === 'warning').length} warnings`,

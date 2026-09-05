@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdtemp, readFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { buildCatalog } from '../src/pipeline/ingest.js'
+import { buildCatalog, buildCatalogBundle } from '../src/pipeline/ingest.js'
 import { publicationBuildId } from '../src/pipeline/publish.js'
 
 test('publishes byte-identical output for the same snapshot', async () => {
@@ -28,6 +28,25 @@ test('publishes byte-identical output for the same snapshot', async () => {
       await readFile(join(second, relative)),
     )
   }
+})
+
+test('publishes multiple games in one atomic build', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'cadence-multigame-'))
+  await buildCatalogBundle({
+    sources: [
+      { game: 'pokemon', snapshot: 'fixtures/tcgjson/pokemon.sample.json' },
+      { game: 'lorcana', snapshot: 'fixtures/tcgjson/lorcana.sample.json' },
+    ],
+    output: root,
+    importedAt: '2026-09-01T00:00:00.000Z',
+  })
+  const manifest = JSON.parse(
+    await readFile(join(root, 'manifest.json'), 'utf8'),
+  )
+  assert.deepEqual(manifest.supportedGames, ['lorcana', 'pokemon'])
+  assert.equal(manifest.counts.games, 2)
+  assert.ok((await readFile(join(root, 'games/lorcana/cards.json'))).length > 0)
+  assert.ok((await readFile(join(root, 'games/pokemon/cards.json'))).length > 0)
 })
 
 test('build identity covers schema, provenance, and operational output', () => {
