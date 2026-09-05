@@ -4,6 +4,7 @@ import { readJson } from '../src/util/json.js'
 import {
   isPokemonCodeCard,
   mapLorcana,
+  mapOnePiece,
   mapPokemon,
 } from '../src/providers/tcgjson/mapper.js'
 
@@ -39,6 +40,26 @@ test('maps Pokemon while keeping cards distinct from printings', async () => {
   assert.ok(
     catalog.printings.every((item) => item.provenance.provider === 'tcgjson'),
   )
+})
+
+test('maps One Piece using the Cadence onepiece slug', async () => {
+  const input = await readJson('fixtures/tcgjson/onepiece.sample.json')
+  const catalog = await mapOnePiece(input, {
+    release: {
+      provider: 'tcgjson',
+      id: 'fixture',
+      manifestUrl: 'fixture://manifest',
+      artifactUrl: 'fixture://one-piece',
+      artifactName: 'one-piece.json',
+    },
+    importedAt: '2026-09-01T00:00:00.000Z',
+  })
+  assert.equal(catalog.games[0]?.slug, 'onepiece')
+  assert.equal(catalog.sets.length, 1)
+  assert.equal(catalog.cards.length, 2)
+  assert.equal(catalog.printings.length, 2)
+  assert.ok(catalog.cards.some((card) => card.cardType === 'Character'))
+  assert.ok(catalog.cards.some((card) => card.cardType === 'Event'))
 })
 
 test('maps Disney Lorcana as an independent game catalog', async () => {

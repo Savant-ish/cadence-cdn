@@ -84,6 +84,16 @@ export async function mapLorcana(
   })
 }
 
+export async function mapOnePiece(
+  input: unknown,
+  context: ImportContext,
+): Promise<NormalizedCatalog> {
+  return mapTcgjsonGame(input, context, {
+    slug: 'onepiece',
+    name: 'One Piece Card Game',
+  })
+}
+
 async function mapTcgjsonGame(
   input: unknown,
   context: ImportContext,

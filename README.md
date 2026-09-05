@@ -1,6 +1,6 @@
 # Cadence CDN
 
-Provider-neutral catalog ingestion and deterministic publishing for Cadence. The catalog imports Pokémon and Disney Lorcana cards from pinned `tcgjson` snapshots and publishes Cadence-owned games, sets, cards, and printings.
+Provider-neutral catalog ingestion and deterministic publishing for Cadence. The catalog imports Pokémon, Disney Lorcana, and One Piece cards from pinned `tcgjson` snapshots and publishes Cadence-owned games, sets, cards, and printings.
 
 Digital Pokémon code-card listings are intentionally excluded at the provider boundary. Sealed products will use a separate domain and are not mixed into card or printing records.
 
@@ -16,7 +16,8 @@ Node.js 22 or newer.
 npm ci
 npm run catalog:fetch -- --provider tcgjson --game pokemon --release latest
 npm run catalog:fetch -- --provider tcgjson --game lorcana --release latest
-npm run catalog:build -- --provider tcgjson --games pokemon,lorcana --snapshot-root snapshots/tcgjson/current
+npm run catalog:fetch -- --provider tcgjson --game onepiece --release latest
+npm run catalog:build -- --provider tcgjson --games pokemon,lorcana,onepiece --snapshot-root snapshots/tcgjson/current
 npm run catalog:validate -- --snapshot snapshots/tcgjson/<release>/pokemon/catalog.json
 npm run catalog:verify-artifacts -- --manifest dist/manifest.json --root dist
 npm run taxonomy:report -- --snapshot snapshots/tcgjson/<release>/pokemon/catalog.json

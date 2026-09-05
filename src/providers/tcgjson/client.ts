@@ -8,7 +8,7 @@ import type {
   NormalizedCatalog,
   SourceRelease,
 } from '../../domain/catalog.js'
-import { mapLorcana, mapPokemon } from './mapper.js'
+import { mapLorcana, mapOnePiece, mapPokemon } from './mapper.js'
 import { GAME_REGISTRY, isGameSlug, type GameSlug } from '../../config/games.js'
 
 export const TCGJSON_GAMES = Object.keys(GAME_REGISTRY) as GameSlug[]
@@ -76,6 +76,7 @@ export class TcgjsonProvider implements CatalogProvider {
     game = 'pokemon',
   ): Promise<SourceRelease> {
     if (!isGameSlug(game)) throw new Error(`Unsupported tcgjson game: ${game}`)
+    const artifactSlug = GAME_REGISTRY[game].tcgjsonArtifact
     const manifestUrl =
       requested === 'latest'
         ? MANIFEST_URL
@@ -92,11 +93,14 @@ export class TcgjsonProvider implements CatalogProvider {
           'filename',
           'path',
         ) ?? ''
-      return new RegExp(`(^|/)${game}\\.full\\.json(\\.gz)?$`, 'i').test(name)
+      return new RegExp(
+        `(^|/)${artifactSlug}\\.full\\.json(\\.gz)?$`,
+        'i',
+      ).test(name)
     })
     if (!entry)
       throw new Error(
-        `The tcgjson manifest does not contain ${game}.full.json or ${game}.full.json.gz`,
+        `The tcgjson manifest does not contain ${artifactSlug}.full.json or ${artifactSlug}.full.json.gz`,
       )
     const artifactName = textField(
       entry,
@@ -188,6 +192,7 @@ export class TcgjsonProvider implements CatalogProvider {
   ): Promise<NormalizedCatalog> {
     if (game === 'pokemon') return mapPokemon(input, context)
     if (game === 'lorcana') return mapLorcana(input, context)
+    if (game === 'onepiece') return mapOnePiece(input, context)
     throw new Error(`Unsupported tcgjson game: ${game}`)
   }
 }

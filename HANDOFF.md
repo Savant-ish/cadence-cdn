@@ -2,7 +2,7 @@
 
 ## Current state
 
-The multi-game card catalog is implemented for Pokémon and Disney Lorcana. The pipeline resolves a pinned weekly `tcgjson` release, verifies source downloads, normalizes them into Cadence-owned records, validates identity and references, emits deterministic JSON, and publishes through GitHub Releases and Cloudflare R2.
+The multi-game card catalog is implemented for Pokémon, Disney Lorcana, and One Piece Card Game. The pipeline resolves a pinned weekly `tcgjson` release, verifies source downloads, normalizes them into Cadence-owned records, validates identity and references, emits deterministic JSON, and publishes through GitHub Releases and Cloudflare R2.
 
 Production entry point: <https://cdn.cadencetcg.dev/catalog/latest.json>
 
@@ -10,7 +10,7 @@ The current public schema is `1.2.0`; identity normalization is `v1`. Consumers 
 
 ## Implemented capabilities
 
-- Game registry and `tcgjson` adapters for Pokémon and Disney Lorcana.
+- Game registry and `tcgjson` adapters for Pokémon, Disney Lorcana, and One Piece Card Game.
 - Stable Cadence game, set, card, and printing IDs independent of provider IDs.
 - Conceptual-card and printing separation; inventory should reference printing IDs.
 - Source provenance and external-ID crosswalks.

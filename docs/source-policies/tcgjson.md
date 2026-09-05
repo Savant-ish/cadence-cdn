@@ -5,8 +5,8 @@
 - Upstream basis: TCGplayer public catalog/search endpoints
 - Retention: keep release ID, source URL when present, TCGplayer product ID as an external ID, and deterministic import time
 - Card and set images: URL metadata only, always `reference-only` or `unavailable`
-- Supported card games: Pokémon and Disney Lorcana
-- Product filtering: exclude Pokémon listings whose normalized name begins `Code Card -` or whose source rarity is `Code Card`; the inspected Lorcana feed currently needs no card exclusions
+- Supported card games: Pokémon, Disney Lorcana, and One Piece Card Game
+- Product filtering: exclude Pokémon listings whose normalized name begins `Code Card -` or whose source rarity is `Code Card`; the inspected Lorcana and One Piece feeds currently need no card exclusions
 - Sealed products: outside the card catalog; future identified sealed rows must be routed to the independent sealed importer rather than normalized as cards
 - Redistribution: dataset and artwork rights require separate review; this repository makes no grant or legal conclusion
 

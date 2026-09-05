@@ -36,6 +36,7 @@ test('publishes multiple games in one atomic build', async () => {
     sources: [
       { game: 'pokemon', snapshot: 'fixtures/tcgjson/pokemon.sample.json' },
       { game: 'lorcana', snapshot: 'fixtures/tcgjson/lorcana.sample.json' },
+      { game: 'onepiece', snapshot: 'fixtures/tcgjson/onepiece.sample.json' },
     ],
     output: root,
     importedAt: '2026-09-01T00:00:00.000Z',
@@ -43,10 +44,13 @@ test('publishes multiple games in one atomic build', async () => {
   const manifest = JSON.parse(
     await readFile(join(root, 'manifest.json'), 'utf8'),
   )
-  assert.deepEqual(manifest.supportedGames, ['lorcana', 'pokemon'])
-  assert.equal(manifest.counts.games, 2)
+  assert.deepEqual(manifest.supportedGames, ['lorcana', 'onepiece', 'pokemon'])
+  assert.equal(manifest.counts.games, 3)
   assert.ok((await readFile(join(root, 'games/lorcana/cards.json'))).length > 0)
   assert.ok((await readFile(join(root, 'games/pokemon/cards.json'))).length > 0)
+  assert.ok(
+    (await readFile(join(root, 'games/onepiece/cards.json'))).length > 0,
+  )
 })
 
 test('build identity covers schema, provenance, and operational output', () => {

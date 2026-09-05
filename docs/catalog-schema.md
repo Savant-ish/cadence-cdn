@@ -30,6 +30,11 @@ games/lorcana/sets.json
 games/lorcana/cards.json
 games/lorcana/printings.json
 games/lorcana/sets/<cadence-set-id>.json
+games/onepiece/index.json
+games/onepiece/sets.json
+games/onepiece/cards.json
+games/onepiece/printings.json
+games/onepiece/sets/<cadence-set-id>.json
 ```
 
 The filename form of a set ID replaces `:` with `_`. Consumers should not derive this filename; use paths declared by `manifest.artifacts` or the game index.

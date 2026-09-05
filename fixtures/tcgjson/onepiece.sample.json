@@ -1,0 +1,43 @@
+{
+  "name": "One Piece Card Game",
+  "slug": "one-piece",
+  "sets": [
+    {
+      "setId": 3188,
+      "name": "Romance Dawn",
+      "abbreviation": "OP-01",
+      "releaseDate": "2022-12-02",
+      "iconUrl": "https://tcgplayer-cdn.tcgplayer.com/set_icon/3188.png"
+    }
+  ],
+  "products": [
+    {
+      "productId": 453507,
+      "name": "Cavendish (Box Topper)",
+      "setId": 3188,
+      "rarity": "Common",
+      "imageUrl": "https://tcgplayer-cdn.tcgplayer.com/product/453507_in_1000x1000.jpg",
+      "metadata": {
+        "customAttributes": {
+          "number": "OP01-008",
+          "cardType": ["Character"],
+          "color": ["Red"]
+        }
+      }
+    },
+    {
+      "productId": 453600,
+      "name": "Gum-Gum Fire-Fist Pistol Red Hawk",
+      "setId": 3188,
+      "rarity": "Rare",
+      "imageUrl": "https://tcgplayer-cdn.tcgplayer.com/product/453600_in_1000x1000.jpg",
+      "metadata": {
+        "customAttributes": {
+          "number": "OP01-026",
+          "cardType": ["Event"],
+          "color": ["Red"]
+        }
+      }
+    }
+  ]
+}

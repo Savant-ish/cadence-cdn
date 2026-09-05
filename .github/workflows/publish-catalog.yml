@@ -42,7 +42,7 @@ jobs:
         env:
           REQUESTED_RELEASE: ${{ inputs.release || 'latest' }}
         run: |
-          for game in pokemon lorcana; do
+          for game in pokemon lorcana onepiece; do
             npm run catalog:fetch -- --provider tcgjson --game "$game" --release "$REQUESTED_RELEASE" --output "$SNAPSHOT_ROOT/$game"
           done
 
@@ -63,7 +63,7 @@ jobs:
           PREVIOUS_AVAILABLE: ${{ steps.previous.outputs.available }}
           ALLOW_COUNT_DROP: ${{ inputs.allow_count_drop || false }}
         run: |
-          args=(--provider tcgjson --games pokemon,lorcana --snapshot-root "$SNAPSHOT_ROOT" --output dist)
+          args=(--provider tcgjson --games pokemon,lorcana,onepiece --snapshot-root "$SNAPSHOT_ROOT" --output dist)
           if [[ "$PREVIOUS_AVAILABLE" == "true" && "$ALLOW_COUNT_DROP" != "true" ]]; then
             args+=(--previous-manifest previous-manifest.json)
           fi
@@ -76,7 +76,7 @@ jobs:
       - name: Prove deterministic output
         run: |
           cp -a dist dist-first
-          npm run catalog:build -- --provider tcgjson --games pokemon,lorcana --snapshot-root "$SNAPSHOT_ROOT" --output dist-repeat
+          npm run catalog:build -- --provider tcgjson --games pokemon,lorcana,onepiece --snapshot-root "$SNAPSHOT_ROOT" --output dist-repeat
           diff --recursive --brief dist-first dist-repeat
 
       - name: Package release assets
@@ -110,7 +110,7 @@ jobs:
           release-assets/*
           --target "$GITHUB_SHA"
           --title "Cadence catalog $RELEASE_ID"
-          --notes "Validated deterministic Pokémon and Disney Lorcana card catalog imported from tcgjson $RELEASE_ID. Images are reference-only. Sealed products are not included."
+          --notes "Validated deterministic Pokémon, Disney Lorcana, and One Piece card catalog imported from tcgjson $RELEASE_ID. Images are reference-only. Sealed products are not included."
           --latest
 
       - name: Publish catalog to Cloudflare R2
