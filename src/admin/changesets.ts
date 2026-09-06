@@ -96,7 +96,7 @@ function validateFieldValue(
   }
   if (
     field === 'image.status' &&
-    !['reference-only', 'unavailable'].includes(value)
+    !['reference-only', 'licensed', 'unavailable'].includes(value)
   )
     throw new Error(`${label}.${field} has an unsupported status`)
   if (

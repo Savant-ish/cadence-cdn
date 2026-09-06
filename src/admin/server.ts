@@ -17,6 +17,7 @@ import { loadAdminCatalog } from './workspace.js'
 import { proposeWithCodex } from './codex.js'
 import { writeJson } from '../util/json.js'
 import { validateCatalog } from '../pipeline/validate.js'
+import { imageAssetOptionsFromEnv, publishOwnedImage } from './image-assets.js'
 
 const workspace = process.cwd()
 const host = '127.0.0.1'
@@ -38,11 +39,12 @@ function json(response: ServerResponse, status: number, value: unknown): void {
 
 async function body(
   request: IncomingMessage,
+  maximumBytes = 2_000_000,
 ): Promise<Record<string, unknown>> {
   const chunks: Buffer[] = []
   for await (const chunk of request) chunks.push(Buffer.from(chunk))
   const bytes = Buffer.concat(chunks)
-  if (bytes.length > 2_000_000) throw new Error('Request body is too large')
+  if (bytes.length > maximumBytes) throw new Error('Request body is too large')
   return JSON.parse(bytes.toString('utf8')) as Record<string, unknown>
 }
 
@@ -166,6 +168,36 @@ async function main(): Promise<void> {
           true,
         )
         json(response, 200, { proposal, preview })
+        return
+      }
+      if (request.method === 'POST' && url.pathname === '/api/images/publish') {
+        const input = await body(request, 42_000_000)
+        const bytes = Buffer.from(String(input.data ?? ''), 'base64')
+        const entityType = String(input.entityType) as AdminEntityType
+        const entityId = String(input.entityId ?? '')
+        const exists =
+          entityType === 'set'
+            ? catalog.sets.some((item) => item.id === entityId)
+            : entityType === 'printing'
+              ? catalog.printings.some((item) => item.id === entityId)
+              : false
+        if (!exists) throw new Error('Select one existing set or printing')
+        const result = await publishOwnedImage(
+          {
+            game: String(input.game ?? ''),
+            entityType,
+            entityId,
+            filename: String(input.filename ?? 'image'),
+            bytes,
+            source: String(input.source ?? ''),
+            creator: String(input.creator ?? ''),
+            capturedAt: String(input.capturedAt ?? ''),
+            rightsBasis: String(input.rightsBasis ?? ''),
+            reviewedBy: String(input.reviewedBy ?? ''),
+          },
+          imageAssetOptionsFromEnv(workspace),
+        )
+        json(response, 201, result)
         return
       }
       if (request.method === 'POST' && url.pathname === '/api/preview') {

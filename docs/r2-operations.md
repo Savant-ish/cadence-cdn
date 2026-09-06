@@ -10,7 +10,7 @@
 - Public development (`r2.dev`) access: disabled
 - CORS: origins `*`, methods `GET` and `HEAD`
 
-The other buckets are `cadence-assets-public` and private `cadence-assets-originals`. Neither currently has a custom domain. Never enable a public domain or `r2.dev` for the originals bucket.
+The other buckets are `cadence-assets-public` and private `cadence-assets-originals`. Configure `assets.cadencetcg.dev` as the custom domain for the public asset bucket before using the admin image publisher. Never enable a public domain or `r2.dev` for the originals bucket.
 
 ## GitHub Actions settings
 

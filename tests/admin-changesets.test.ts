@@ -169,3 +169,31 @@ test('skips drafts and rejects identity or approved sealed edits', async () => {
     /valid URL/,
   )
 })
+
+test('accepts licensed image status in a reviewable draft', () => {
+  const file = validateChangeSetFile({
+    schemaVersion: 1,
+    changeSets: [
+      {
+        id: 'owned-image',
+        title: 'Owned image',
+        status: 'draft',
+        reason: 'Approved capture',
+        createdBy: 'admin',
+        createdAt: '2026-09-06T00:00:00Z',
+        operations: [
+          {
+            entity: 'set',
+            select: { ids: ['set:test'] },
+            set: {
+              'image.sourceUrl':
+                'https://assets.cadencetcg.dev/assets/v1/test.webp',
+              'image.status': 'licensed',
+            },
+          },
+        ],
+      },
+    ],
+  })
+  assert.equal(file.changeSets[0]?.status, 'draft')
+})

@@ -12,7 +12,7 @@ The validator rejects a `licensed` status until an approved source policy exists
 - `cadence-assets-public` is reserved for approved web derivatives.
 - Catalog JSON remains in `cadence-catalog-public` and should reference only approved public asset records when substitution is implemented.
 
-No public endpoint is enabled for either asset bucket today. The originals bucket must never receive a public custom domain or `r2.dev` access.
+The intended public endpoint for `cadence-assets-public` is `https://assets.cadencetcg.dev`. The originals bucket must never receive a public custom domain or `r2.dev` access.
 
 ## Required future promotion workflow
 
@@ -33,3 +33,22 @@ legally sourced capture
 Substitutions should preserve history and support rollback. Public keys should be content-addressed or versioned and cacheable as immutable. Catalog records should distinguish the active Cadence-owned asset from a provider reference; provider URLs remain useful for reconciliation but are not the fallback authority.
 
 Use separate, bucket-scoped credentials for capture, review/promotion, and catalog publication. Multi-TCG support belongs in asset metadata and key structure rather than separate ad hoc pipelines per game.
+
+## Local automated publication
+
+Start the workbench with `npm run admin:serve`, select exactly one set or card printing, and complete **Publish legally sourced image to R2**. The server validates the upload, stores the original privately, generates 1600 px and 320 px WebP derivatives, publishes them under content-addressed immutable keys, verifies their public bytes, records provenance in `config/admin/image-assets.json`, and creates a draft catalog substitution.
+
+The draft still requires review and approval. Current catalog validation deliberately blocks licensed images until the release contract recognizes this registry, so an upload cannot silently enter production.
+
+Set these local environment variables before launching the workbench:
+
+```text
+R2_ASSET_ACCOUNT_ID
+R2_ASSET_ACCESS_KEY_ID
+R2_ASSET_SECRET_ACCESS_KEY
+R2_ASSET_ORIGINALS_BUCKET=cadence-assets-originals
+R2_ASSET_PUBLIC_BUCKET=cadence-assets-public
+R2_ASSET_PUBLIC_BASE_URL=https://assets.cadencetcg.dev
+```
+
+Use an R2 token scoped only to the two asset buckets. Never expose these server-side credentials in browser code, commit them, or add them to the catalog publication workflow.
