@@ -72,6 +72,46 @@ const EDITABLE_FIELDS: Record<
   ]),
 }
 
+function validateFieldValue(
+  entity: Exclude<AdminEntityType, 'sealed-product'>,
+  field: string,
+  value: unknown,
+  label: string,
+): void {
+  if (field === 'metadata') {
+    object(value, `${label}.${field}`)
+    return
+  }
+  if (typeof value !== 'string')
+    throw new Error(`${label}.${field} must be a string`)
+  if (field === 'image.sourceUrl') {
+    let url: URL
+    try {
+      url = new URL(value)
+    } catch {
+      throw new Error(`${label}.${field} must be a valid URL`)
+    }
+    if (!['http:', 'https:'].includes(url.protocol))
+      throw new Error(`${label}.${field} must use HTTP or HTTPS`)
+  }
+  if (
+    field === 'image.status' &&
+    !['reference-only', 'unavailable'].includes(value)
+  )
+    throw new Error(`${label}.${field} has an unsupported status`)
+  if (
+    field === 'classification.kind' &&
+    ![
+      'expansion',
+      'promo',
+      'trainer-kit',
+      'championship-deck',
+      'supplemental',
+    ].includes(value)
+  )
+    throw new Error(`${label}.${field} has an unsupported set kind`)
+}
+
 function object(value: unknown, label: string): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value))
     throw new Error(`${label} must be an object`)
@@ -158,8 +198,9 @@ export function validateChangeSetFile(value: unknown): ChangeSetFile {
         throw new Error(
           `${id}.operations[${operationIndex}].unset must contain strings`,
         )
+      const setValues = operation.set ? object(operation.set, `${id}.set`) : {}
       const fields = [
-        ...Object.keys(operation.set ? object(operation.set, `${id}.set`) : {}),
+        ...Object.keys(setValues),
         ...((operation.unset as unknown[] | undefined) ?? []).map((field) =>
           string(field, `${id}.unset`),
         ),
@@ -175,6 +216,13 @@ export function validateChangeSetFile(value: unknown): ChangeSetFile {
           )
             throw new Error(
               `${id}: ${operation.entity}.${field} is not editable`,
+            )
+          else if (field in setValues)
+            validateFieldValue(
+              operation.entity as keyof typeof EDITABLE_FIELDS,
+              field,
+              setValues[field],
+              id,
             )
       if (select.where !== undefined) {
         if (!Array.isArray(select.where))

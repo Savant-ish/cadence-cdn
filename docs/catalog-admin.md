@@ -64,7 +64,9 @@ npm run admin:serve
 
 Open the tokenized `127.0.0.1` URL printed by the process. The token changes on every launch and is required by all local API calls. `CADENCE_ADMIN_PORT` changes the default port `4317`; `CADENCE_SNAPSHOT_ROOT` selects another snapshot root.
 
-The initial interface supports game/entity selection, text filtering, up to 500 visible records, row selection, a natural-language instruction, schema-constrained Codex proposals, deterministic match previews, and saving a proposal as a draft. AI requests are limited to 200 explicitly selected records.
+The interface supports game/entity selection, text filtering, up to 500 visible records, row selection, manual bulk field edits, a natural-language instruction, schema-constrained Codex proposals, deterministic before/after previews, and saving a proposal as a draft. AI requests are limited to 200 explicitly selected records.
+
+Set and card-printing rows display image thumbnails and visibly mark failed image loads. Choose `image.sourceUrl` in the manual editor to compare the first selected record's current image with a proposed HTTP(S) replacement before previewing the change. Conceptual cards do not own artwork; select `Card printings` when reviewing card images. Until the licensed-asset contract is implemented, replacements retain reference-only policy and cannot be marked licensed through this tool.
 
 The server invokes `codex exec` ephemerally with a read-only sandbox, passes the bounded selection through standard input, and requires output matching `schemas/admin-proposal.schema.json`. It then forces `status: draft`, removes approval fields, validates editable fields, and previews the operation. Saving only appends the validated draft to the local change-set file. A human must review the Git diff and add approval metadata separately.
 

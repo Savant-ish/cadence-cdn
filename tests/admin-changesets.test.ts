@@ -144,4 +144,28 @@ test('skips drafts and rejects identity or approved sealed edits', async () => {
       }),
     /cannot be approved/,
   )
+  assert.throws(
+    () =>
+      validateChangeSetFile({
+        schemaVersion: 1,
+        changeSets: [
+          {
+            id: 'image',
+            title: 'Bad URL',
+            status: 'draft',
+            reason: 'Bad',
+            createdBy: 'x',
+            createdAt: 'x',
+            operations: [
+              {
+                entity: 'printing',
+                select: { game: 'pokemon' },
+                set: { 'image.sourceUrl': 'not-a-url' },
+              },
+            ],
+          },
+        ],
+      }),
+    /valid URL/,
+  )
 })

@@ -16,6 +16,7 @@ import {
 import { loadAdminCatalog } from './workspace.js'
 import { proposeWithCodex } from './codex.js'
 import { writeJson } from '../util/json.js'
+import { validateCatalog } from '../pipeline/validate.js'
 
 const workspace = process.cwd()
 const host = '127.0.0.1'
@@ -50,6 +51,21 @@ function authorized(request: IncomingMessage, url: URL): boolean {
     url.searchParams.get('token') === token ||
     request.headers['x-cadence-admin-token'] === token
   )
+}
+
+function draftProposal(
+  value: unknown,
+  createdBy = 'local-admin',
+): CatalogChangeSet {
+  const proposal = value as CatalogChangeSet
+  if (!proposal || typeof proposal !== 'object')
+    throw new Error('A proposal is required')
+  proposal.status = 'draft'
+  proposal.createdBy = proposal.createdBy || createdBy
+  delete proposal.approvedBy
+  delete proposal.approvedAt
+  return validateChangeSetFile({ schemaVersion: 1, changeSets: [proposal] })
+    .changeSets[0]!
 }
 
 async function main(): Promise<void> {
@@ -152,13 +168,37 @@ async function main(): Promise<void> {
         json(response, 200, { proposal, preview })
         return
       }
+      if (request.method === 'POST' && url.pathname === '/api/preview') {
+        const input = await body(request)
+        const proposal = draftProposal(input.proposal)
+        const clone = structuredClone(catalog)
+        const preview = applyChangeSets(
+          clone,
+          { schemaVersion: 1, changeSets: [proposal] },
+          true,
+        )
+        const validation = validateCatalog(clone)
+        const ids = new Set(
+          proposal.operations.flatMap(
+            (operation) => operation.select.ids ?? [],
+          ),
+        )
+        const selected = (value: typeof catalog) =>
+          [...value.sets, ...value.cards, ...value.printings].filter((record) =>
+            ids.has(record.id),
+          )
+        json(response, 200, {
+          proposal,
+          preview,
+          before: selected(catalog),
+          after: selected(clone),
+          validation,
+        })
+        return
+      }
       if (request.method === 'POST' && url.pathname === '/api/save') {
         const input = await body(request)
-        const proposal = input.proposal as unknown as CatalogChangeSet
-        proposal.status = 'draft'
-        proposal.createdBy = proposal.createdBy || 'local-admin'
-        delete proposal.approvedBy
-        delete proposal.approvedAt
+        const proposal = draftProposal(input.proposal)
         const existing = (await loadChangeSets(changesPath)) ?? {
           schemaVersion: 1 as const,
           changeSets: [],

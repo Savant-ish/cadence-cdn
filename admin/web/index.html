@@ -30,7 +30,8 @@
         margin-top: 5px;
       }
       .toolbar,
-      .ai {
+      .ai,
+      .manual {
         display: flex;
         gap: 10px;
         padding: 14px 24px;
@@ -82,8 +83,34 @@
         top: 0;
         background: #0b1020;
       }
+      .thumb {
+        width: 48px;
+        height: 64px;
+        object-fit: contain;
+        border-radius: 4px;
+        background: #070b14;
+      }
+      .thumb.broken {
+        outline: 2px solid #ff6577;
+      }
+      .image-review {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+      .image-review figure {
+        margin: 0;
+        color: #9aa8c3;
+        font-size: 12px;
+      }
       .ai {
         align-items: stretch;
+      }
+      .manual {
+        flex-wrap: wrap;
+      }
+      .manual input[type='text'] {
+        min-width: 220px;
       }
       .ai textarea {
         flex: 1;
@@ -134,7 +161,7 @@
       <select id="entity">
         <option value="set">Sets</option>
         <option value="card">Cards</option>
-        <option value="printing">Printings</option>
+        <option value="printing">Card printings</option>
       </select>
       <input
         id="search"
@@ -149,6 +176,34 @@
         placeholder="Describe a metadata change for the selected rows…"
       ></textarea
       ><button id="propose">Ask Codex</button>
+    </div>
+    <div class="manual">
+      <strong>Manual bulk edit</strong>
+      <select id="field"></select>
+      <input id="value" type="text" placeholder="New value" />
+      <label><input id="clear" type="checkbox" /> Clear field</label>
+      <input id="reason" type="text" placeholder="Reason for change" />
+      <button id="manual" class="secondary">Preview manual edit</button>
+      <div id="image-review" class="image-review hidden">
+        <figure>
+          Current<br /><img
+            id="current-image"
+            class="thumb"
+            alt="Current selected catalog image"
+          />
+        </figure>
+        <figure>
+          Replacement<br /><img
+            id="replacement-image"
+            class="thumb"
+            alt="Proposed replacement image"
+          />
+        </figure>
+        <span
+          >This changes URL metadata only. It does not upload an image or grant
+          licensed status.</span
+        >
+      </div>
     </div>
     <div id="status" class="status">Loading…</div>
     <div id="proposal" class="proposal hidden">
@@ -188,6 +243,28 @@
             })[c],
         )
       const el = (id) => document.getElementById(id)
+      const editableFields = {
+        set: [
+          'name',
+          'code',
+          'releaseDate',
+          'classification.eraId',
+          'classification.eraName',
+          'classification.kind',
+          'image.sourceUrl',
+          'image.status',
+        ],
+        card: ['name', 'cardType', 'metadata'],
+        printing: [
+          'collectorNumber',
+          'rarity',
+          'language',
+          'finish',
+          'edition',
+          'image.sourceUrl',
+          'image.status',
+        ],
+      }
       const api = async (path, options = {}) => {
         const r = await fetch(
           path + (path.includes('?') ? '&' : '?') + 'token=' + token,
@@ -208,9 +285,42 @@
         el('rows').innerHTML = records
           .map(
             (r) =>
-              `<tr><td><input class="pick" type="checkbox" value="${esc(r.id)}"></td><td title="${esc(r.id)}">${esc(r.id)}</td><td>${esc(r.name || r.identityKey)}</td><td>${esc(r.code || r.collectorNumber)}</td><td>${esc(r.cardType || r.rarity)}</td><td>${r.image?.sourceUrl ? '✓' : '—'}</td></tr>`,
+              `<tr><td><input class="pick" type="checkbox" value="${esc(r.id)}"></td><td title="${esc(r.id)}">${esc(r.id)}</td><td>${esc(r.name || r.identityKey)}</td><td>${esc(r.code || r.collectorNumber)}</td><td>${esc(r.cardType || r.rarity)}</td><td>${r.image?.sourceUrl ? `<img class="thumb" src="${esc(r.image.sourceUrl)}" alt="" loading="lazy" onerror="this.classList.add('broken');this.title='Image failed to load'">` : '—'}</td></tr>`,
           )
           .join('')
+      }
+      function selectedIds() {
+        return [...document.querySelectorAll('.pick:checked')].map(
+          (item) => item.value,
+        )
+      }
+      function updateFields() {
+        el('field').innerHTML = editableFields[el('entity').value]
+          .map((field) => `<option value="${field}">${field}</option>`)
+          .join('')
+        updateImageReview()
+      }
+      function updateImageReview() {
+        const visible = el('field').value === 'image.sourceUrl'
+        el('image-review').classList.toggle('hidden', !visible)
+        if (!visible) return
+        const current = records.find((record) => record.id === selectedIds()[0])
+        el('current-image').src = current?.image?.sourceUrl || ''
+        el('replacement-image').src = el('value').value || ''
+      }
+      function showProposal(result, source) {
+        proposal = result.proposal
+        el('proposal').classList.remove('hidden')
+        el('proposal').querySelector('strong').textContent =
+          `${source} draft proposal`
+        el('proposal').querySelector('pre').textContent = JSON.stringify(
+          result,
+          null,
+          2,
+        )
+        el('status').className = 'status good'
+        el('status').textContent =
+          `Draft ready: ${result.preview.matches} records matched.`
       }
       async function load() {
         try {
@@ -233,16 +343,20 @@
       }
       el('load').onclick = load
       el('game').onchange = load
-      el('entity').onchange = load
+      el('entity').onchange = () => {
+        updateFields()
+        load()
+      }
       el('all').onchange = (e) =>
         document
           .querySelectorAll('.pick')
           .forEach((x) => (x.checked = e.target.checked))
+      el('rows').onchange = updateImageReview
+      el('field').onchange = updateImageReview
+      el('value').oninput = updateImageReview
       el('propose').onclick = async () => {
         try {
-          const ids = [...document.querySelectorAll('.pick:checked')].map(
-            (x) => x.value,
-          )
+          const ids = selectedIds()
           el('status').textContent = 'Codex is preparing a constrained draft…'
           const x = await api('/api/propose', {
             method: 'POST',
@@ -253,16 +367,47 @@
               ids,
             }),
           })
-          proposal = x.proposal
-          el('proposal').classList.remove('hidden')
-          el('proposal').querySelector('pre').textContent = JSON.stringify(
-            x,
-            null,
-            2,
-          )
-          el('status').className = 'status good'
-          el('status').textContent =
-            `Draft ready: ${x.preview.matches} records matched.`
+          showProposal(x, 'Codex')
+        } catch (e) {
+          el('status').className = 'status error'
+          el('status').textContent = e.message
+        }
+      }
+      el('manual').onclick = async () => {
+        try {
+          const ids = selectedIds()
+          if (!ids.length) throw new Error('Select at least one record.')
+          const field = el('field').value
+          const clear = el('clear').checked
+          let value = el('value').value
+          if (!clear && !value)
+            throw new Error('Enter a value or select Clear field.')
+          if (!clear && field === 'metadata') {
+            value = JSON.parse(value)
+          }
+          const now = new Date()
+          const entity = el('entity').value
+          const operation = {
+            entity,
+            select: { game: el('game').value, ids },
+            ...(clear ? { unset: [field] } : { set: { [field]: value } }),
+          }
+          const manualProposal = {
+            id: `manual-${entity}-${now.getTime()}`,
+            title: `Manual ${entity} metadata edit`,
+            status: 'draft',
+            reason: el('reason').value || 'Manual catalog metadata edit',
+            createdBy: 'local-admin',
+            createdAt: now.toISOString(),
+            operations: [operation],
+          }
+          el('status').className = 'status'
+          el('status').textContent = 'Validating manual edit…'
+          const result = await api('/api/preview', {
+            method: 'POST',
+            body: JSON.stringify({ proposal: manualProposal }),
+          })
+          showProposal(result, 'Manual')
         } catch (e) {
           el('status').className = 'status error'
           el('status').textContent = e.message
@@ -282,6 +427,7 @@
           el('status').textContent = e.message
         }
       }
+      updateFields()
       load()
     </script>
   </body>
