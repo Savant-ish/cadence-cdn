@@ -18,6 +18,7 @@ The current public schema is `1.2.0`; identity normalization is `v1`. Consumers 
 - Conservative exclusion of digital Pokemon code-card listings.
 - Set image URL extraction from catalog metadata.
 - Curated Pokemon era/set-kind taxonomy queue and reporting tools.
+- Versioned catalog change sets with bulk selectors, protected fields, draft previews, approval metadata, and checksum-bound application reporting.
 - Deterministic per-game, aggregate, and per-set artifacts.
 - Validation for collisions, broken references, ambiguous external IDs, count regressions, and unapproved image-license claims.
 - GitHub Actions CI, scheduled weekly ingestion, deterministic rebuild proof, GitHub Release packaging, and atomic R2 publication.
@@ -46,7 +47,7 @@ See [R2 operations](docs/r2-operations.md) for credentials, publication, verific
 ## Next work
 
 1. Integrate `cadence-web` using [the consumer contract](docs/consumer-integration.md).
-2. Build admin review for Pokemon taxonomy and owned image substitutions.
+2. Build the cadence-web metadata-grid UI over the catalog change-set contract and add owned-image substitution review.
 3. Define licensed-asset metadata and implement an audited promotion pipeline from private originals to public derivatives.
 4. Add further TCGs one at a time with dedicated fixtures, validation, and source policies.
 5. Implement the independent sealed-product model, ingestion, artifacts, and inventory identity contract.

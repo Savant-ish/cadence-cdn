@@ -13,6 +13,7 @@ import {
   loadTaxonomy,
   taxonomyReport,
 } from '../taxonomy/pokemon.js'
+import { applyChangeSets, loadChangeSets } from '../admin/changesets.js'
 
 export interface BuildOptions {
   snapshot: string
@@ -25,6 +26,8 @@ export interface BuildOptions {
   dryRun?: boolean
   taxonomyPath?: string
   requireApprovedTaxonomy?: boolean
+  changesPath?: string
+  includeDraftChanges?: boolean
 }
 
 export interface BuildSource {
@@ -122,7 +125,29 @@ export async function buildCatalogBundle(
     pokemonGameIds.has(item.gameId),
   )
   applyApprovedTaxonomy(pokemonSets, taxonomy)
+  const overrideReport = applyChangeSets(
+    catalog,
+    await loadChangeSets(
+      options.changesPath ?? 'config/admin/change-sets.json',
+    ),
+    options.includeDraftChanges,
+  )
   const report = validateCatalog(catalog)
+  report.overrides = {
+    changeSets: overrideReport.changeSets,
+    operations: overrideReport.operations,
+    matches: overrideReport.matches,
+    skippedDrafts: overrideReport.skippedDrafts,
+    details: overrideReport.details,
+  }
+  if (!options.includeDraftChanges)
+    for (const detail of overrideReport.details)
+      if (detail.matches === 0)
+        report.issues.push({
+          severity: 'error',
+          code: 'override-no-match',
+          message: `${detail.changeSetId} operation ${detail.operation} matched no ${detail.entity} records`,
+        })
   const coverage = taxonomyReport(pokemonSets, taxonomy)
   for (const message of coverage.invalid)
     report.issues.push({ severity: 'error', code: 'invalid-taxonomy', message })

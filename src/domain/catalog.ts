@@ -98,4 +98,16 @@ export interface ValidationReport {
   valid: boolean
   counts: Record<'games' | 'sets' | 'cards' | 'printings', number>
   issues: ValidationIssue[]
+  overrides?: {
+    changeSets: number
+    operations: number
+    matches: number
+    skippedDrafts: number
+    details: Array<{
+      changeSetId: string
+      operation: number
+      entity: string
+      matches: number
+    }>
+  }
 }

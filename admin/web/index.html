@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cadence Catalog Workbench</title>
+    <style>
+      :root {
+        font: 14px system-ui;
+        color: #e8edf5;
+        background: #0b1020;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      header {
+        padding: 18px 24px;
+        border-bottom: 1px solid #26314b;
+        background: #11182b;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+      .sub {
+        color: #9aa8c3;
+        margin-top: 5px;
+      }
+      .toolbar,
+      .ai {
+        display: flex;
+        gap: 10px;
+        padding: 14px 24px;
+        border-bottom: 1px solid #26314b;
+        align-items: center;
+      }
+      input,
+      select,
+      textarea,
+      button {
+        font: inherit;
+        color: inherit;
+        background: #172139;
+        border: 1px solid #34415e;
+        border-radius: 6px;
+        padding: 9px;
+      }
+      input[type='search'] {
+        min-width: 260px;
+      }
+      button {
+        cursor: pointer;
+        background: #2457d6;
+        border-color: #3970f0;
+      }
+      button.secondary {
+        background: #172139;
+      }
+      main {
+        padding: 0 24px 30px;
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        white-space: nowrap;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 9px;
+        border-bottom: 1px solid #202a41;
+        max-width: 360px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      th {
+        position: sticky;
+        top: 0;
+        background: #0b1020;
+      }
+      .ai {
+        align-items: stretch;
+      }
+      .ai textarea {
+        flex: 1;
+        min-height: 70px;
+        resize: vertical;
+      }
+      .status {
+        padding: 10px 24px;
+        color: #9fb0cf;
+      }
+      .proposal {
+        margin: 14px 24px;
+        padding: 14px;
+        background: #11182b;
+        border: 1px solid #34415e;
+        border-radius: 8px;
+      }
+      .proposal pre {
+        white-space: pre-wrap;
+        max-height: 360px;
+        overflow: auto;
+      }
+      .hidden {
+        display: none;
+      }
+      .good {
+        color: #7ee2a8;
+      }
+      .error {
+        color: #ff8e9b;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Cadence Catalog Workbench</h1>
+      <div class="sub">
+        Local-only bulk metadata review. AI changes remain drafts until reviewed
+        in Git.
+      </div>
+    </header>
+    <div class="toolbar">
+      <select id="game">
+        <option value="pokemon">Pokémon</option>
+        <option value="lorcana">Disney Lorcana</option>
+        <option value="onepiece">One Piece</option>
+      </select>
+      <select id="entity">
+        <option value="set">Sets</option>
+        <option value="card">Cards</option>
+        <option value="printing">Printings</option>
+      </select>
+      <input
+        id="search"
+        type="search"
+        placeholder="Filter visible metadata"
+      /><button id="load" class="secondary">Search</button>
+      <span id="count"></span>
+    </div>
+    <div class="ai">
+      <textarea
+        id="instruction"
+        placeholder="Describe a metadata change for the selected rows…"
+      ></textarea
+      ><button id="propose">Ask Codex</button>
+    </div>
+    <div id="status" class="status">Loading…</div>
+    <div id="proposal" class="proposal hidden">
+      <strong>Draft proposal</strong>
+      <pre></pre>
+      <button id="save">Save draft change set</button>
+    </div>
+    <main>
+      <table>
+        <thead>
+          <tr>
+            <th><input id="all" type="checkbox" /></th>
+            <th>ID</th>
+            <th>Name / identity</th>
+            <th>Code / number</th>
+            <th>Type / rarity</th>
+            <th>Image</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </main>
+    <script>
+      const token = '__ADMIN_TOKEN__'
+      let records = [],
+        proposal = null
+      const esc = (value) =>
+        String(value ?? '').replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#39;',
+            })[c],
+        )
+      const el = (id) => document.getElementById(id)
+      const api = async (path, options = {}) => {
+        const r = await fetch(
+          path + (path.includes('?') ? '&' : '?') + 'token=' + token,
+          {
+            ...options,
+            headers: {
+              'content-type': 'application/json',
+              'x-cadence-admin-token': token,
+              ...options.headers,
+            },
+          },
+        )
+        const x = await r.json()
+        if (!r.ok) throw new Error(x.error || r.statusText)
+        return x
+      }
+      function render() {
+        el('rows').innerHTML = records
+          .map(
+            (r) =>
+              `<tr><td><input class="pick" type="checkbox" value="${esc(r.id)}"></td><td title="${esc(r.id)}">${esc(r.id)}</td><td>${esc(r.name || r.identityKey)}</td><td>${esc(r.code || r.collectorNumber)}</td><td>${esc(r.cardType || r.rarity)}</td><td>${r.image?.sourceUrl ? '✓' : '—'}</td></tr>`,
+          )
+          .join('')
+      }
+      async function load() {
+        try {
+          el('status').textContent = 'Loading records…'
+          const q = new URLSearchParams({
+            entity: el('entity').value,
+            game: el('game').value,
+            search: el('search').value,
+            limit: '500',
+          })
+          const x = await api('/api/records?' + q)
+          records = x.records
+          render()
+          el('count').textContent = `${records.length} shown / ${x.total}`
+          el('status').textContent = 'Select rows, then describe the change.'
+        } catch (e) {
+          el('status').className = 'status error'
+          el('status').textContent = e.message
+        }
+      }
+      el('load').onclick = load
+      el('game').onchange = load
+      el('entity').onchange = load
+      el('all').onchange = (e) =>
+        document
+          .querySelectorAll('.pick')
+          .forEach((x) => (x.checked = e.target.checked))
+      el('propose').onclick = async () => {
+        try {
+          const ids = [...document.querySelectorAll('.pick:checked')].map(
+            (x) => x.value,
+          )
+          el('status').textContent = 'Codex is preparing a constrained draft…'
+          const x = await api('/api/propose', {
+            method: 'POST',
+            body: JSON.stringify({
+              instruction: el('instruction').value,
+              entity: el('entity').value,
+              game: el('game').value,
+              ids,
+            }),
+          })
+          proposal = x.proposal
+          el('proposal').classList.remove('hidden')
+          el('proposal').querySelector('pre').textContent = JSON.stringify(
+            x,
+            null,
+            2,
+          )
+          el('status').className = 'status good'
+          el('status').textContent =
+            `Draft ready: ${x.preview.matches} records matched.`
+        } catch (e) {
+          el('status').className = 'status error'
+          el('status').textContent = e.message
+        }
+      }
+      el('save').onclick = async () => {
+        try {
+          const x = await api('/api/save', {
+            method: 'POST',
+            body: JSON.stringify({ proposal }),
+          })
+          el('status').className = 'status good'
+          el('status').textContent =
+            `Saved ${x.saved}. Review the Git diff before approval.`
+        } catch (e) {
+          el('status').className = 'status error'
+          el('status').textContent = e.message
+        }
+      }
+      load()
+    </script>
+  </body>
+</html>

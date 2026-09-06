@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "status",
+    "reason",
+    "createdBy",
+    "createdAt",
+    "operations"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "const": "draft" },
+    "reason": { "type": "string", "minLength": 1 },
+    "createdBy": { "type": "string", "const": "codex" },
+    "createdAt": { "type": "string", "minLength": 1 },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["entity", "select", "changes"],
+        "properties": {
+          "entity": { "enum": ["set", "card", "printing", "sealed-product"] },
+          "select": {
+            "type": "object",
+            "required": ["game", "ids"],
+            "properties": {
+              "game": { "type": "string" },
+              "ids": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          },
+          "changes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["field", "value"],
+              "properties": {
+                "field": { "type": "string" },
+                "value": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -12,6 +12,7 @@ import {
   updateSuggestions,
 } from './taxonomy/pokemon.js'
 import { isGameSlug } from './config/games.js'
+import { loadChangeSets } from './admin/changesets.js'
 
 function args(tokens: string[]): {
   command?: string
@@ -46,8 +47,17 @@ async function main(): Promise<void> {
   const parsed = args(process.argv.slice(2))
   if (parsed.flags.has('help') || !parsed.command) {
     console.log(
-      'Usage: catalog <fetch|build|validate|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report> [options]',
+      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report|admin-validate> [options]',
     )
+    return
+  }
+  if (parsed.command === 'admin-validate') {
+    const path = resolve(
+      textFlag(parsed.flags, 'changes', 'config/admin/change-sets.json'),
+    )
+    const file = await loadChangeSets(path)
+    if (!file) throw new Error(`Change-set file not found: ${path}`)
+    console.log(`Valid: ${file.changeSets.length} catalog change sets`)
     return
   }
   if (parsed.command === 'verify-manifest') {
@@ -155,7 +165,11 @@ async function main(): Promise<void> {
     console.log(`Fetched ${release.id} to ${path}`)
     return
   }
-  if (parsed.command === 'build' || parsed.command === 'validate') {
+  if (
+    parsed.command === 'build' ||
+    parsed.command === 'validate' ||
+    parsed.command === 'admin-preview'
+  ) {
     const games = parsed.flags.has('games')
       ? textFlag(parsed.flags, 'games')
           .split(',')
@@ -176,11 +190,18 @@ async function main(): Promise<void> {
           }
         : {}),
       allowCountDrop: parsed.flags.has('allow-count-drop'),
-      dryRun: parsed.command === 'validate' || parsed.flags.has('dry-run'),
+      dryRun:
+        parsed.command === 'validate' ||
+        parsed.command === 'admin-preview' ||
+        parsed.flags.has('dry-run'),
       taxonomyPath: resolve(
         textFlag(parsed.flags, 'taxonomy', 'config/taxonomy/pokemon-sets.json'),
       ),
       requireApprovedTaxonomy: parsed.flags.has('require-approved-taxonomy'),
+      changesPath: resolve(
+        textFlag(parsed.flags, 'changes', 'config/admin/change-sets.json'),
+      ),
+      includeDraftChanges: parsed.command === 'admin-preview',
     }
     if (games.length) {
       const snapshotRoot = resolve(
@@ -197,6 +218,8 @@ async function main(): Promise<void> {
       console.log(
         `Valid: ${report.counts.games} games, ${report.counts.sets} sets, ${report.counts.cards} cards, ${report.counts.printings} printings; ${report.issues.filter((item) => item.severity === 'warning').length} warnings`,
       )
+      if (parsed.command === 'admin-preview')
+        console.log(JSON.stringify(report.overrides, null, 2))
       return
     }
     const snapshot = resolve(
@@ -217,6 +240,8 @@ async function main(): Promise<void> {
     console.log(
       `Valid: ${report.counts.sets} sets, ${report.counts.cards} cards, ${report.counts.printings} printings; ${report.issues.filter((item) => item.severity === 'warning').length} warnings`,
     )
+    if (parsed.command === 'admin-preview')
+      console.log(JSON.stringify(report.overrides, null, 2))
     return
   }
   throw new Error(`Unknown command: ${parsed.command}`)
