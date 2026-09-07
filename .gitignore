@@ -3,5 +3,6 @@ build/
 dist/
 snapshots/
 release-assets/
+pricing-dist/
 *.log
 .DS_Store

@@ -34,6 +34,19 @@ npm run pricing:ingest -- \
 
 The generated batch is a transport/archive unit, not the long-term query model. A production store should enforce uniqueness by observation ID, preserve full history, and build a replaceable latest-price projection by printing, condition, finish, channel, currency, and price kind. Never overwrite historical observations.
 
+## Packaging and publication
+
+Pricing batches are sharded before publication so consumers never depend on one large response. The default shard contains at most 5,000 observations.
+
+```sh
+npm run pricing:package -- --input <batch.json> --output pricing-dist
+npm run pricing:publish-r2 -- --root pricing-dist
+```
+
+The publisher writes immutable objects beneath `pricing/builds/<build-id>/`, verifies R2 metadata and public bytes, and only then updates `https://cdn.cadencetcg.dev/pricing/latest.json`. It uses `R2_CATALOG_BUCKET`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_PUBLIC_BASE_URL`.
+
+The pointer contains the pricing schema and build IDs, timestamp, provider release, catalog build ID, manifest URL, and immutable pricing base URL. The manifest declares every shard's byte length, SHA-256 digest, and record count. Consumers must verify the complete build before accepting it and retain their previous price view if any file fails. Catalog and pricing pointers update independently.
+
 ## Provider adapters
 
 Adapters belong outside the normalized core and should implement authentication, source-specific rate limits, retries, attribution, and licensing constraints. This permits official APIs, licensed bulk feeds, or manual imports to coexist without changing the Cadence pricing model.

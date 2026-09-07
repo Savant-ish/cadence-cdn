@@ -40,6 +40,8 @@ Provider-neutral pricing feeds can be resolved to stable printing IDs with `npm 
 
 Daily TCGCSV pricing snapshots can be acquired with `npm run pricing:fetch:tcgcsv -- --category-id <id>`. The adapter follows TCGCSV's timestamp, user-agent, throttling, and local-cache guidance.
 
+Use `pricing:package` and `pricing:publish-r2` to publish checksum-declared immutable shards and atomically update the independent `pricing/latest.json` pointer.
+
 Run `npm run admin:serve` to launch the token-protected local catalog workbench. It can send explicitly selected records to the locally authenticated Codex CLI for draft proposals; AI output is always validated and cannot approve or publish changes.
 
 The CLI also provides `taxonomy:suggest`, `taxonomy:report`, `catalog:package-release`, and `catalog:publish-r2`. R2 publication is normally performed only by GitHub Actions; see [the R2 runbook](docs/r2-operations.md).

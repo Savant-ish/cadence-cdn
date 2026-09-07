@@ -8,6 +8,8 @@ https://cdn.cadencetcg.dev/catalog/latest.json
 
 Consumers must not hard-code a build ID or derive artifact paths from provider conventions.
 
+Pricing is discovered independently from `https://cdn.cadencetcg.dev/pricing/latest.json`. Its pointer is bound to the `catalogBuildId` used for resolving provider products. Import that catalog build first, verify every manifest-declared pricing shard, insert observations idempotently by observation ID, and swap the current-price projection only after the complete batch succeeds. Pricing failure must not invalidate the catalog or previously accepted prices.
+
 ## Acceptance protocol
 
 1. Fetch `latest.json` and validate its required fields.

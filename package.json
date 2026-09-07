@@ -20,6 +20,8 @@
     "admin:serve": "npm run build --silent && node build/src/admin/server.js",
     "pricing:ingest": "npm run build --silent && node build/src/cli.js pricing-ingest",
     "pricing:fetch:tcgcsv": "npm run build --silent && node build/src/cli.js pricing-fetch-tcgcsv",
+    "pricing:package": "npm run build --silent && node build/src/cli.js pricing-package",
+    "pricing:publish-r2": "npm run build --silent && node build/src/cli.js pricing-publish-r2",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",

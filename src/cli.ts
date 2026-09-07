@@ -15,6 +15,7 @@ import { isGameSlug } from './config/games.js'
 import { loadChangeSets } from './admin/changesets.js'
 import { ingestPricingFile } from './pricing/ingest.js'
 import { fetchTcgcsvPricing } from './pricing/tcgcsv.js'
+import { packagePricingBatch, publishPricingToR2 } from './pricing/publish.js'
 
 function args(tokens: string[]): {
   command?: string
@@ -49,7 +50,50 @@ async function main(): Promise<void> {
   const parsed = args(process.argv.slice(2))
   if (parsed.flags.has('help') || !parsed.command) {
     console.log(
-      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report|admin-validate|pricing-ingest|pricing-fetch-tcgcsv> [options]',
+      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report|admin-validate|pricing-ingest|pricing-fetch-tcgcsv|pricing-package|pricing-publish-r2> [options]',
+    )
+    return
+  }
+  if (parsed.command === 'pricing-package') {
+    const manifest = await packagePricingBatch({
+      input: resolve(textFlag(parsed.flags, 'input')),
+      output: resolve(textFlag(parsed.flags, 'output', 'pricing-dist')),
+      ...(parsed.flags.has('chunk-size')
+        ? { chunkSize: Number(textFlag(parsed.flags, 'chunk-size')) }
+        : {}),
+    })
+    console.log(
+      `Packaged pricing build ${manifest.buildId}: ${manifest.counts.observations} observations in ${manifest.artifacts.length - 1} chunks`,
+    )
+    return
+  }
+  if (parsed.command === 'pricing-publish-r2') {
+    const result = await publishPricingToR2({
+      root: resolve(textFlag(parsed.flags, 'root', 'pricing-dist')),
+      bucket: textFlag(parsed.flags, 'bucket', process.env.R2_CATALOG_BUCKET),
+      accountId: textFlag(
+        parsed.flags,
+        'account-id',
+        process.env.R2_ACCOUNT_ID,
+      ),
+      publicBaseUrl: textFlag(
+        parsed.flags,
+        'public-base-url',
+        process.env.R2_PUBLIC_BASE_URL,
+      ),
+      accessKeyId: textFlag(
+        parsed.flags,
+        'access-key-id',
+        process.env.R2_ACCESS_KEY_ID,
+      ),
+      secretAccessKey: textFlag(
+        parsed.flags,
+        'secret-access-key',
+        process.env.R2_SECRET_ACCESS_KEY,
+      ),
+    })
+    console.log(
+      `Published pricing build ${result.buildId}: ${result.uploaded} uploaded, ${result.skipped} unchanged`,
     )
     return
   }
