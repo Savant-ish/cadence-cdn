@@ -1,5 +1,7 @@
 # Pricing ingestion
 
+> **Transitional:** pricing ownership is moving to the sibling `cadence-pricing` repository. This document describes the proven implementation currently present here for extraction and compatibility; new providers and valuation logic belong there.
+
 Pricing is an independent, append-oriented domain. It is not embedded in immutable catalog records because prices change frequently and have different licensing, retention, and availability requirements.
 
 ```text

@@ -8,26 +8,26 @@ The validator rejects a `licensed` status until an approved source policy exists
 
 ## Storage boundaries
 
-- `cadence-assets-originals` is private storage for future legally sourced original captures.
-- `cadence-assets-public` is reserved for approved web derivatives.
+- `cadence-assets-originals` is private storage for legally sourced original captures.
+- `cadence-assets-public` stores approved web derivatives.
 - Catalog JSON remains in `cadence-catalog-public` and should reference only approved public asset records when substitution is implemented.
 
 The intended public endpoint for `cadence-assets-public` is `https://assets.cadencetcg.dev`. The originals bucket must never receive a public custom domain or `r2.dev` access.
 
-## Required future promotion workflow
+## Promotion workflow
 
-An owned image must not become public merely because a file was uploaded. Admin tooling should record the game, entity type and Cadence ID, source/creator, capture date, rights basis, original digest, reviewer, approval time, derivative recipe, derivative digest, and superseded asset when applicable.
+An owned image must not become active catalog content merely because a file was uploaded. Admin tooling records the game, entity type and Cadence ID, source/creator, capture date, rights basis, original digest, reviewer, approval time, derivative recipe, and derivative digest. Supersession history and catalog activation remain outstanding.
 
-The intended lifecycle is:
+The lifecycle is:
 
 ```text
 legally sourced capture
   -> private immutable original
-  -> metadata and rights review
+  -> metadata and rights declaration/review
   -> deterministic web derivatives
-  -> approval
   -> public asset publication
-  -> atomic catalog substitution
+  -> draft catalog substitution
+  -> registry-aware catalog approval (outstanding)
 ```
 
 Substitutions should preserve history and support rollback. Public keys should be content-addressed or versioned and cacheable as immutable. Catalog records should distinguish the active Cadence-owned asset from a provider reference; provider URLs remain useful for reconciliation but are not the fallback authority.

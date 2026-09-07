@@ -45,7 +45,7 @@ Selectors support `equals`, case-insensitive `contains`, and `missing`. Operatio
 
 Identity, ownership, relationships, external IDs, and provenance are protected. Editable fields cover display metadata, classification, language and variant descriptions, and reference-image state. Validation continues to reject unsupported licensed-image claims.
 
-`sealed-product` is reserved as an entity type so the eventual admin UI and saved drafts have a stable vocabulary. Such operations may remain drafts, but approval is rejected until the sealed catalog schema and validator exist.
+`sealed-product` is reserved as an entity type so the eventual TCGCSV candidate-review UI and saved drafts have a stable vocabulary. Such operations may remain drafts, but approval is rejected until the sealed product/configuration schema and validator exist. The review UI must show classifier confidence and evidence rather than treating every non-card product as sealed.
 
 ## Web editor contract
 
@@ -66,7 +66,9 @@ Open the tokenized `127.0.0.1` URL printed by the process. The token changes on 
 
 The interface supports game/entity selection, text filtering, up to 500 visible records, row selection, manual bulk field edits, a natural-language instruction, schema-constrained Codex proposals, deterministic before/after previews, and saving a proposal as a draft. AI requests are limited to 200 explicitly selected records.
 
-Set and card-printing rows display image thumbnails and visibly mark failed image loads. Choose `image.sourceUrl` in the manual editor to compare the first selected record's current image with a proposed HTTP(S) replacement before previewing the change. Conceptual cards do not own artwork; select `Card printings` when reviewing card images. Until the licensed-asset contract is implemented, replacements retain reference-only policy and cannot be marked licensed through this tool.
+Set and card-printing rows display image thumbnails and visibly mark failed image loads. Choose `image.sourceUrl` in the manual editor to compare the first selected record's current image with a proposed HTTP(S) replacement before previewing the change. Conceptual cards do not own artwork; select `Card printings` when reviewing card images.
+
+The owned-image panel accepts a legally sourced local file plus provenance and reviewer metadata, stores the immutable original privately, generates display and thumbnail WebP derivatives, uploads and publicly verifies them, records `config/admin/image-assets.json`, and returns a draft `licensed` substitution. Catalog validation still blocks that draft from production until registry-aware licensed-image validation and the corresponding manifest contract are implemented.
 
 The server invokes `codex exec` ephemerally with a read-only sandbox, passes the bounded selection through standard input, and requires output matching `schemas/admin-proposal.schema.json`. It then forces `status: draft`, removes approval fields, validates editable fields, and previews the operation. Saving only appends the validated draft to the local change-set file. A human must review the Git diff and add approval metadata separately.
 

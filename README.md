@@ -2,7 +2,7 @@
 
 Provider-neutral catalog ingestion and deterministic publishing for Cadence. The catalog imports Pokémon, Disney Lorcana, and One Piece cards from pinned `tcgjson` snapshots and publishes Cadence-owned games, sets, cards, and printings.
 
-Digital Pokémon code-card listings are intentionally excluded at the provider boundary. Sealed products will use a separate domain and are not mixed into card or printing records.
+Digital Pokémon code-card listings are intentionally excluded at the provider boundary. Sealed products will use separate product and configuration identities and are never mixed into card or printing records. TCGCSV is the planned initial sealed discovery source.
 
 Production catalog: <https://cdn.cadencetcg.dev/catalog/latest.json>
 
@@ -36,7 +36,7 @@ Pokemon era and set-kind assignments are maintained as reviewed Cadence taxonomy
 
 Bulk metadata corrections are expressed as reviewed catalog change sets. See [catalog bulk administration](docs/catalog-admin.md). Provider snapshots and published R2 objects are never edited in place.
 
-Provider-neutral pricing feeds can be resolved to stable printing IDs with `npm run pricing:ingest`. Pricing remains a separate append-oriented domain and is not embedded in catalog builds. See [pricing ingestion](docs/pricing-ingestion.md).
+Pricing remains a separate append-oriented domain and is not embedded in catalog builds. The working pricing proof currently in this repository is scheduled for extraction into `cadence-pricing`; do not expand it here.
 
 Daily TCGCSV pricing snapshots can be acquired with `npm run pricing:fetch:tcgcsv -- --category-id <id>`. The adapter follows TCGCSV's timestamp, user-agent, throttling, and local-cache guidance.
 
@@ -52,9 +52,9 @@ The CLI also provides `taxonomy:suggest`, `taxonomy:report`, `catalog:package-re
 
 `cadence-web` should bootstrap from the production pointer, verify the immutable manifest and artifact checksums, and accept builds atomically. It must retain the previous accepted build on any update failure. See [the catalog contract](docs/catalog-schema.md) and [consumer integration protocol](docs/consumer-integration.md).
 
-Raw snapshots, generated catalogs, and images are excluded from Git. Image URLs are reference metadata only; this project does not download, republish, or claim a license to artwork. See [the source policy](docs/source-policies/tcgjson.md).
+Raw snapshots and generated catalogs are excluded from Git. Provider image URLs are reference metadata only and are never mirrored. The local admin can publish legally sourced originals and derivatives through the separate audited asset workflow. See [the source policy](docs/source-policies/tcgjson.md) and [image lifecycle](docs/image-assets.md).
 
-Cloudflare storage is divided into a public catalog bucket, a reserved public derivatives bucket, and a private originals bucket. This foundation does not change the image policy: no provider images are stored in R2. See [the image asset lifecycle](docs/image-assets.md).
+Cloudflare storage is divided into a public catalog bucket, a public approved-derivatives bucket, and a private originals bucket. No provider images are stored in R2. See [the image asset lifecycle](docs/image-assets.md).
 
 ## Automated publication
 

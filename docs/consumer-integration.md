@@ -8,7 +8,7 @@ https://cdn.cadencetcg.dev/catalog/latest.json
 
 Consumers must not hard-code a build ID or derive artifact paths from provider conventions.
 
-Pricing is discovered independently from `https://cdn.cadencetcg.dev/pricing/latest.json`. Its pointer is bound to the `catalogBuildId` used for resolving provider products. Import that catalog build first, verify every manifest-declared pricing shard, insert observations idempotently by observation ID, and swap the current-price projection only after the complete batch succeeds. Pricing failure must not invalidate the catalog or previously accepted prices.
+Pricing is a separate `cadence-pricing` concern. Transitional pricing artifacts use `https://cdn.cadencetcg.dev/pricing/latest.json`, but cadence-web should follow the final contract published by that repository rather than coupling to the proof implementation here.
 
 ## Acceptance protocol
 
@@ -31,7 +31,7 @@ A partial download, malformed JSON, checksum mismatch, unsupported schema, or fa
 - Treat `identityKey` as diagnostic data. Do not parse it or recreate IDs.
 - Code must remain game-neutral and use `supportedGames` plus `games.json` for discovery.
 
-Sealed inventory must not reference card-printing IDs. A later sealed catalog will define its own product and configuration identities without changing the card identity contract.
+Sealed inventory must not reference card-printing IDs. The planned sealed catalog will define product and configuration identities sourced initially from conservatively classified TCGCSV products, without changing the card identity contract.
 
 ## Image and taxonomy behavior
 

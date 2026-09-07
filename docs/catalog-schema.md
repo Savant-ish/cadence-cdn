@@ -59,3 +59,5 @@ The pointer is mutable and briefly cached. Its target tree is immutable. Consume
 ## Compatibility
 
 Adding optional fields is backward-compatible within a schema line. Removing or changing field meaning, identity behavior, required fields, or artifact semantics requires a schema-version change. Consumers must explicitly allow supported schema versions rather than assuming every future version is compatible.
+
+Sealed products are not present in schema `1.2.0`. Their future public contract will introduce separate sealed product and configuration identities, initially discovered from conservatively classified TCGCSV products. This requires schema-version and cadence-web compatibility review; sealed inventory must never use a card-printing ID.

@@ -42,7 +42,7 @@ npm run catalog:publish-r2 -- \
 
 The command reads `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` from the environment. Do not place credential values in shell history. Publication is idempotent for an identical build and refuses conflicting immutable objects. Before moving the pointer, it fetches every build object through the public hostname with four-way bounded concurrency, retries, and a two-minute per-attempt timeout, then verifies exact bytes and SHA-256. This catches storage/CDN delivery failures that an authenticated R2 `HEAD` cannot detect without overwhelming cold origin delivery.
 
-Normalized pricing uses the same public bucket and hostname but an independent namespace and pointer: immutable builds are stored under `pricing/builds/<build-id>/`, and discovery uses `https://cdn.cadencetcg.dev/pricing/latest.json`. Run `npm run pricing:package` before `npm run pricing:publish-r2`. The pricing pointer is written only after every shard uploads and verifies through the public hostname.
+The transitional pricing proof uses the same public bucket and hostname but an independent namespace and pointer: immutable builds are stored under `pricing/builds/<build-id>/`, and discovery uses `https://cdn.cadencetcg.dev/pricing/latest.json`. Run `npm run pricing:package` before `npm run pricing:publish-r2`. The pricing pointer is written only after every shard uploads and verifies through the public hostname. Operational ownership moves to `cadence-pricing` after extraction.
 
 `.github/workflows/publish-pricing.yml` runs daily at 10:30 UTC and can be dispatched manually. It uses the same catalog-bucket variables and secrets listed above; no additional credentials are required.
 

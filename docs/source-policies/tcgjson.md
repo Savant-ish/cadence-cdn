@@ -7,9 +7,9 @@
 - Card and set images: URL metadata only, always `reference-only` or `unavailable`
 - Supported card games: Pokémon, Disney Lorcana, and One Piece Card Game
 - Product filtering: exclude Pokémon listings whose normalized name begins `Code Card -` or whose source rarity is `Code Card`; the inspected Lorcana and One Piece feeds currently need no card exclusions
-- Sealed products: outside the card catalog; future identified sealed rows must be routed to the independent sealed importer rather than normalized as cards
+- Sealed products: outside the card catalog; sealed discovery will initially use TCGCSV products and route them to independent sealed product/configuration identities
 - Redistribution: dataset and artwork rights require separate review; this repository makes no grant or legal conclusion
 
-The provider-image acquisition pipeline is absent and therefore disabled. The presence of public and private R2 asset buckets does not authorize mirroring: no provider card or set images may be downloaded or published by this MVP. Future legally sourced originals follow [the owned image lifecycle](../image-assets.md) and require a separate approved source policy before any record can use `licensed` status.
+Provider images remain reference metadata and may not be mirrored. A separate owned-image pipeline accepts legally sourced local originals, creates derivatives, publishes them to the asset bucket, records provenance, and creates draft substitutions. Production still requires registry-aware licensed-image validation before such drafts can be approved. See [the owned image lifecycle](../image-assets.md).
 
 The code-card rule deliberately uses structured rarity and anchored-name signals. Do not filter arbitrary occurrences of the word `code`: legitimate card rules and flavor text can contain it. Filtering happens before conceptual cards, printings, and Cadence IDs are created. A source set that originally contains products but has no products after this filter is also omitted; unrelated upstream sets that arrived empty are preserved as source catalog records.

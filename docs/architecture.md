@@ -33,11 +33,11 @@ The build fails for invalid catalogs. Warnings—including missing optional valu
 
 Cloudflare R2 is the primary unpacked origin. GitHub Releases provide immutable archives, checksums, release metadata, and a separate recovery path.
 
-| Resource                   | Exposure                     | Purpose                              |
-| -------------------------- | ---------------------------- | ------------------------------------ |
-| `cadence-catalog-public`   | `https://cdn.cadencetcg.dev` | Normalized catalog JSON              |
-| `cadence-assets-public`    | No domain yet                | Future approved public derivatives   |
-| `cadence-assets-originals` | Private                      | Future legally owned source captures |
+| Resource                   | Exposure                        | Purpose                           |
+| -------------------------- | ------------------------------- | --------------------------------- |
+| `cadence-catalog-public`   | `https://cdn.cadencetcg.dev`    | Normalized catalog JSON           |
+| `cadence-assets-public`    | `assets.cadencetcg.dev` planned | Approved public derivatives       |
+| `cadence-assets-originals` | Private                         | Legally sourced original captures |
 
 All Cloudflare-managed `r2.dev` endpoints are disabled. The catalog hostname requires TLS 1.2 or newer. Its CORS policy permits public `GET` and `HEAD` requests and exposes ETag, length, type, and cache-control headers.
 
@@ -45,12 +45,16 @@ R2 publication writes the complete tree under `catalog/builds/<build-id>/` with 
 
 The GitHub Actions credential is an account token scoped to Object Read & Write on `cadence-catalog-public` only. Asset pipelines must use distinct credentials. See [R2 operations](r2-operations.md).
 
+## Sealed product boundary
+
+Sealed identity and metadata are a separate catalog domain but remain owned by this repository. TCGCSV product collections are the planned initial discovery source. A conservative classifier routes known cards, confidently sealed products, digital codes, unsupported merchandise, and uncertain records separately. Sealed configurations receive their own stable inventory IDs and artifacts; they never reuse card-printing IDs. See [sealed products](sealed-products.md) and the [TCGCSV source policy](source-policies/tcgcsv.md).
+
 ## Pricing boundary
 
-Pricing is a separate high-churn, append-oriented domain. Acquisition adapters produce provider-neutral feeds; the core resolver maps an explicitly named provider external ID to exactly one stable Cadence printing ID and emits a catalog-build-bound batch. Price history and current-price projections must be stored independently from immutable catalog artifacts. See [pricing ingestion](pricing-ingestion.md).
+Pricing is a separate high-churn domain owned by `cadence-pricing`. Transitional pricing code remains here only until the new repository publishes a compatible replacement. Catalog builds expose stable identities and provider crosswalks; they do not contain prices.
 
 ## Image and taxonomy policy
 
-Provider card and set URLs are descriptive references, never mirrored assets. The validator rejects `licensed` status because no approved image source policy exists yet. Owned originals and public derivatives will use separate storage and an explicit provenance/approval process described in [image assets](image-assets.md).
+Provider card and set URLs are descriptive references and are never mirrored. Owned-image upload, deterministic derivatives, R2 publication, public verification, provenance recording, and draft substitution are implemented. Production catalog validation still rejects `licensed` status until the asset registry becomes an approved publication authority. See [image assets](image-assets.md).
 
 Pokemon era and set-kind data is curated configuration. Suggestions are non-authoritative and pending assignments are omitted from published set records. See [taxonomy administration](taxonomy-admin.md).

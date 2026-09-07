@@ -42,18 +42,18 @@ See [R2 operations](docs/r2-operations.md) for credentials, publication, verific
 
 ## Deliberate limitations
 
-- Pricing acquisition, serving, inventory, and marketplace listings remain out of scope; the provider-neutral pricing ingestion boundary is implemented.
-- Sealed products are intentionally a separate future catalog domain and import path; they must not be modeled as cards or printings.
+- Pricing ownership is moving to the sibling `cadence-pricing` repository. The implementation here is transitional and should be removed only after a compatible replacement is live.
+- Sealed products are a separate catalog domain owned here. TCGCSV products are the planned initial discovery source; they require conservative classification and independent product/configuration identities.
 - All upstream TCGplayer card and set URLs are `reference-only`. They are not mirrored to R2 or represented as licensed.
 - Owned-image ingestion, R2 derivative publication, verification, provenance recording, and draft substitution are implemented. See [image assets](docs/image-assets.md).
 - Pokemon taxonomy suggestions remain unpublished until individually approved. Normal builds tolerate unclassified sets; `--require-approved-taxonomy` is the future strict-production gate.
 
 ## Next work
 
-1. Integrate `cadence-web` using [the consumer contract](docs/consumer-integration.md).
-2. Build the cadence-web metadata-grid UI over the catalog change-set contract and add owned-image substitution review.
-3. Define licensed-asset metadata and implement an audited promotion pipeline from private originals to public derivatives.
+1. Make `config/admin/image-assets.json` authoritative for licensed-image validation, update the manifest image policy, review a schema bump, and activate `assets.cadencetcg.dev`.
+2. Implement the TCGCSV sealed-product candidate importer, classifier/review queue, product/configuration identities, schema, validation, and artifacts.
+3. Review the 219 pending Pokémon era/set-kind assignments.
 4. Add further TCGs one at a time with dedicated fixtures, validation, and source policies.
-5. Implement the independent sealed-product model, ingestion, artifacts, and inventory identity contract.
+5. Extract the transitional pricing implementation after `cadence-pricing` publishes a compatible replacement.
 
 Do not download or republish provider images while implementing later phases. Every public owned asset must have recorded rights provenance and an explicit approval step.
