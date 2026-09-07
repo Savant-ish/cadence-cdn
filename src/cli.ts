@@ -16,6 +16,7 @@ import { loadChangeSets } from './admin/changesets.js'
 import { ingestPricingFile } from './pricing/ingest.js'
 import { fetchTcgcsvPricing } from './pricing/tcgcsv.js'
 import { packagePricingBatch, publishPricingToR2 } from './pricing/publish.js'
+import { fetchPublishedPrintings } from './pricing/catalog-source.js'
 
 function args(tokens: string[]): {
   command?: string
@@ -50,7 +51,27 @@ async function main(): Promise<void> {
   const parsed = args(process.argv.slice(2))
   if (parsed.flags.has('help') || !parsed.command) {
     console.log(
-      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report|admin-validate|pricing-ingest|pricing-fetch-tcgcsv|pricing-package|pricing-publish-r2> [options]',
+      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report|admin-validate|pricing-ingest|pricing-fetch-tcgcsv|pricing-fetch-catalog|pricing-package|pricing-publish-r2> [options]',
+    )
+    return
+  }
+  if (parsed.command === 'pricing-fetch-catalog') {
+    const result = await fetchPublishedPrintings({
+      latestUrl: textFlag(
+        parsed.flags,
+        'latest-url',
+        'https://cdn.cadencetcg.dev/catalog/latest.json',
+      ),
+      game: textFlag(parsed.flags, 'game', 'pokemon'),
+      output: resolve(
+        textFlag(parsed.flags, 'output', 'pricing-work/printings.json'),
+      ),
+      metadata: resolve(
+        textFlag(parsed.flags, 'metadata', 'pricing-work/catalog.json'),
+      ),
+    })
+    console.log(
+      `Fetched catalog build ${result.buildId}: ${result.printings} printings`,
     )
     return
   }

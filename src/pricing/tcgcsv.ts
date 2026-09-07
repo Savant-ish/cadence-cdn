@@ -178,5 +178,11 @@ export async function fetchTcgcsvPricing(
     observations,
   }
   await writeJson(join(root, 'feed.json'), feed)
+  await writeJson(resolve(options.output, 'latest.json'), {
+    schemaVersion: 1,
+    release,
+    categoryId: options.categoryId,
+    feed: `${release}/${options.categoryId}/feed.json`,
+  })
   return { feed, release, groups: groups.length }
 }

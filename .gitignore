@@ -4,5 +4,6 @@ dist/
 snapshots/
 release-assets/
 pricing-dist/
+pricing-work/
 *.log
 .DS_Store

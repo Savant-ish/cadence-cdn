@@ -44,6 +44,8 @@ The command reads `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY
 
 Normalized pricing uses the same public bucket and hostname but an independent namespace and pointer: immutable builds are stored under `pricing/builds/<build-id>/`, and discovery uses `https://cdn.cadencetcg.dev/pricing/latest.json`. Run `npm run pricing:package` before `npm run pricing:publish-r2`. The pricing pointer is written only after every shard uploads and verifies through the public hostname.
 
+`.github/workflows/publish-pricing.yml` runs daily at 10:30 UTC and can be dispatched manually. It uses the same catalog-bucket variables and secrets listed above; no additional credentials are required.
+
 ## Verification and recovery
 
 After publication:

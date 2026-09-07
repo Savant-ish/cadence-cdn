@@ -47,6 +47,8 @@ The publisher writes immutable objects beneath `pricing/builds/<build-id>/`, ver
 
 The pointer contains the pricing schema and build IDs, timestamp, provider release, catalog build ID, manifest URL, and immutable pricing base URL. The manifest declares every shard's byte length, SHA-256 digest, and record count. Consumers must verify the complete build before accepting it and retain their previous price view if any file fails. Catalog and pricing pointers update independently.
 
+`.github/workflows/publish-pricing.yml` runs once daily at 10:30 UTC and supports manual dispatch. It downloads and checksum-verifies the printing crosswalk from the currently accepted catalog build, fetches the TCGCSV Pokémon category, normalizes and shards the batch, then publishes through the existing catalog-bucket credentials. This guarantees the pricing pointer names the exact catalog build used for identity resolution.
+
 ## Provider adapters
 
 Adapters belong outside the normalized core and should implement authentication, source-specific rate limits, retries, attribution, and licensing constraints. This permits official APIs, licensed bulk feeds, or manual imports to coexist without changing the Cadence pricing model.

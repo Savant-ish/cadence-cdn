@@ -24,6 +24,7 @@ The current public schema is `1.2.0`; identity normalization is `v1`. Consumers 
 - Provider-neutral pricing feed validation and external-ID-to-printing resolution with immutable observation IDs and rejection reporting.
 - Resumable, throttled daily TCGCSV pricing acquisition with raw snapshot retention and TCGplayer product-ID mapping.
 - Sharded immutable pricing artifacts, public byte verification, and an independent atomic R2 pricing pointer.
+- Daily GitHub pricing publication resolved against a checksum-verified copy of the currently accepted catalog printings.
 - GitHub Actions CI, scheduled weekly ingestion, deterministic rebuild proof, GitHub Release packaging, and atomic R2 publication.
 
 ## Cloudflare deployment
