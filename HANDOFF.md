@@ -21,6 +21,8 @@ The current public schema is `1.2.0`; identity normalization is `v1`. Consumers 
 - Versioned catalog change sets with bulk selectors, protected fields, draft previews, approval metadata, and checksum-bound application reporting.
 - Deterministic per-game, aggregate, and per-set artifacts.
 - Validation for collisions, broken references, ambiguous external IDs, count regressions, and unapproved image-license claims.
+- Provider-neutral pricing feed validation and external-ID-to-printing resolution with immutable observation IDs and rejection reporting.
+- Resumable, throttled daily TCGCSV pricing acquisition with raw snapshot retention and TCGplayer product-ID mapping.
 - GitHub Actions CI, scheduled weekly ingestion, deterministic rebuild proof, GitHub Release packaging, and atomic R2 publication.
 
 ## Cloudflare deployment
@@ -38,10 +40,10 @@ See [R2 operations](docs/r2-operations.md) for credentials, publication, verific
 
 ## Deliberate limitations
 
-- Pricing, inventory, and marketplace listings are out of scope.
+- Pricing acquisition, serving, inventory, and marketplace listings remain out of scope; the provider-neutral pricing ingestion boundary is implemented.
 - Sealed products are intentionally a separate future catalog domain and import path; they must not be modeled as cards or printings.
 - All upstream TCGplayer card and set URLs are `reference-only`. They are not mirrored to R2 or represented as licensed.
-- The owned-image ingestion and substitution workflow is designed but not implemented. See [image assets](docs/image-assets.md).
+- Owned-image ingestion, R2 derivative publication, verification, provenance recording, and draft substitution are implemented. See [image assets](docs/image-assets.md).
 - Pokemon taxonomy suggestions remain unpublished until individually approved. Normal builds tolerate unclassified sets; `--require-approved-taxonomy` is the future strict-production gate.
 
 ## Next work

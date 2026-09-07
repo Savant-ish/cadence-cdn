@@ -13,6 +13,8 @@ import {
 } from './taxonomy/pokemon.js'
 import { isGameSlug } from './config/games.js'
 import { loadChangeSets } from './admin/changesets.js'
+import { ingestPricingFile } from './pricing/ingest.js'
+import { fetchTcgcsvPricing } from './pricing/tcgcsv.js'
 
 function args(tokens: string[]): {
   command?: string
@@ -47,7 +49,37 @@ async function main(): Promise<void> {
   const parsed = args(process.argv.slice(2))
   if (parsed.flags.has('help') || !parsed.command) {
     console.log(
-      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report|admin-validate> [options]',
+      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report|admin-validate|pricing-ingest|pricing-fetch-tcgcsv> [options]',
+    )
+    return
+  }
+  if (parsed.command === 'pricing-fetch-tcgcsv') {
+    const categoryId = Number(textFlag(parsed.flags, 'category-id'))
+    const result = await fetchTcgcsvPricing({
+      categoryId,
+      output: resolve(
+        textFlag(parsed.flags, 'output', 'snapshots/pricing/tcgcsv'),
+      ),
+      ...(parsed.flags.has('user-agent')
+        ? { userAgent: textFlag(parsed.flags, 'user-agent') }
+        : process.env.TCGCSV_USER_AGENT
+          ? { userAgent: process.env.TCGCSV_USER_AGENT }
+          : {}),
+    })
+    console.log(
+      `Fetched TCGCSV ${result.release}: ${result.groups} groups, ${result.feed.observations.length} price observations`,
+    )
+    return
+  }
+  if (parsed.command === 'pricing-ingest') {
+    const batch = await ingestPricingFile({
+      input: resolve(textFlag(parsed.flags, 'input')),
+      printings: resolve(textFlag(parsed.flags, 'printings')),
+      catalogBuildId: textFlag(parsed.flags, 'catalog-build-id'),
+      output: resolve(textFlag(parsed.flags, 'output', 'pricing-batch.json')),
+    })
+    console.log(
+      `Pricing batch: ${batch.observations.length} accepted, ${batch.rejected.length} rejected`,
     )
     return
   }

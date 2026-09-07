@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/Savant-ish/cadence-cdn/main/schemas/pricing-feed.schema.json",
+  "title": "Cadence provider pricing feed",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "provider",
+    "externalIdKey",
+    "fetchedAt",
+    "observations"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "provider": { "type": "string", "minLength": 1 },
+    "externalIdKey": { "type": "string", "minLength": 1 },
+    "fetchedAt": { "type": "string", "format": "date-time" },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "providerProductId",
+          "observedAt",
+          "currency",
+          "channel",
+          "prices"
+        ],
+        "properties": {
+          "providerProductId": { "type": "string", "minLength": 1 },
+          "providerSkuId": { "type": "string", "minLength": 1 },
+          "observedAt": { "type": "string", "format": "date-time" },
+          "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+          "condition": { "type": "string" },
+          "finish": { "type": "string" },
+          "channel": { "enum": ["retail", "buylist"] },
+          "prices": {
+            "type": "object",
+            "minProperties": 1,
+            "properties": {
+              "market": { "type": "integer", "minimum": 0 },
+              "low": { "type": "integer", "minimum": 0 },
+              "mid": { "type": "integer", "minimum": 0 },
+              "high": { "type": "integer", "minimum": 0 }
+            },
+            "additionalProperties": false
+          },
+          "sourceUrl": { "type": "string", "format": "uri" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

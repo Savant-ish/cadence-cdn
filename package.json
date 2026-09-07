@@ -18,6 +18,8 @@
     "admin:validate": "npm run build --silent && node build/src/cli.js admin-validate",
     "admin:preview": "npm run build --silent && node build/src/cli.js admin-preview",
     "admin:serve": "npm run build --silent && node build/src/admin/server.js",
+    "pricing:ingest": "npm run build --silent && node build/src/cli.js pricing-ingest",
+    "pricing:fetch:tcgcsv": "npm run build --silent && node build/src/cli.js pricing-fetch-tcgcsv",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",

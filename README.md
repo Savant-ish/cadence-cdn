@@ -36,6 +36,10 @@ Pokemon era and set-kind assignments are maintained as reviewed Cadence taxonomy
 
 Bulk metadata corrections are expressed as reviewed catalog change sets. See [catalog bulk administration](docs/catalog-admin.md). Provider snapshots and published R2 objects are never edited in place.
 
+Provider-neutral pricing feeds can be resolved to stable printing IDs with `npm run pricing:ingest`. Pricing remains a separate append-oriented domain and is not embedded in catalog builds. See [pricing ingestion](docs/pricing-ingestion.md).
+
+Daily TCGCSV pricing snapshots can be acquired with `npm run pricing:fetch:tcgcsv -- --category-id <id>`. The adapter follows TCGCSV's timestamp, user-agent, throttling, and local-cache guidance.
+
 Run `npm run admin:serve` to launch the token-protected local catalog workbench. It can send explicitly selected records to the locally authenticated Codex CLI for draft proposals; AI output is always validated and cannot approve or publish changes.
 
 The CLI also provides `taxonomy:suggest`, `taxonomy:report`, `catalog:package-release`, and `catalog:publish-r2`. R2 publication is normally performed only by GitHub Actions; see [the R2 runbook](docs/r2-operations.md).

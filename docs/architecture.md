@@ -45,6 +45,10 @@ R2 publication writes the complete tree under `catalog/builds/<build-id>/` with 
 
 The GitHub Actions credential is an account token scoped to Object Read & Write on `cadence-catalog-public` only. Asset pipelines must use distinct credentials. See [R2 operations](r2-operations.md).
 
+## Pricing boundary
+
+Pricing is a separate high-churn, append-oriented domain. Acquisition adapters produce provider-neutral feeds; the core resolver maps an explicitly named provider external ID to exactly one stable Cadence printing ID and emits a catalog-build-bound batch. Price history and current-price projections must be stored independently from immutable catalog artifacts. See [pricing ingestion](pricing-ingestion.md).
+
 ## Image and taxonomy policy
 
 Provider card and set URLs are descriptive references, never mirrored assets. The validator rejects `licensed` status because no approved image source policy exists yet. Owned originals and public derivatives will use separate storage and an explicit provenance/approval process described in [image assets](image-assets.md).
