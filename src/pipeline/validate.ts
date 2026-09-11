@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import type {
+  CatalogPrinting,
   NormalizedCatalog,
   ValidationIssue,
   ValidationReport,
@@ -14,6 +15,39 @@ function duplicateIssues(values: string[], label: string): ValidationIssue[] {
     code: `duplicate-${label}`,
     message: `${label} is duplicated: ${value}`,
   }))
+}
+
+function normalizedIdentityKey(input: string | undefined): string {
+  return input?.trim() ? input.trim() : '(unknown)'
+}
+
+function physicalIdentityKey(item: CatalogPrinting): string {
+  return [
+    item.cardId,
+    item.setId,
+    item.language,
+    normalizedIdentityKey(item.edition),
+    normalizedIdentityKey(item.finish),
+  ].join('|')
+}
+
+function hasCompoundFinish(value: string | undefined): boolean {
+  return typeof value === 'string' && /[,/;]/.test(value)
+}
+
+function hasEmbeddedEdition(value: string | undefined): boolean {
+  return (
+    typeof value === 'string' &&
+    /\b(?:\d+(?:st|nd|rd|th)?\s+edition|first\s+edition|unlimited)\b/i.test(
+      value,
+    )
+  )
+}
+
+function mapCounts(values: Map<string, number>): Record<string, number> {
+  return Object.fromEntries(
+    [...values.entries()].sort((a, b) => a[0].localeCompare(b[0])),
+  )
 }
 
 export function validateCatalog(catalog: NormalizedCatalog): ValidationReport {
@@ -75,6 +109,12 @@ export function validateCatalog(catalog: NormalizedCatalog): ValidationReport {
         message: `${card.id} references ${card.gameId}`,
       })
   const externalIds = new Map<string, string>()
+  const languageCounts = new Map<string, number>()
+  const editionCounts = new Map<string, number>()
+  const finishCounts = new Map<string, number>()
+  const physicalIdentities = new Map<string, number>()
+  let compoundFinishCount = 0
+  let embeddedEditionInFinishCount = 0
   for (const printing of catalog.printings) {
     if (!cardIds.has(printing.cardId))
       issues.push({
@@ -123,7 +163,31 @@ export function validateCatalog(catalog: NormalizedCatalog): ValidationReport {
         })
       externalIds.set(key, printing.id)
     }
+    languageCounts.set(
+      printing.language,
+      (languageCounts.get(printing.language) ?? 0) + 1,
+    )
+    const edition = normalizedIdentityKey(printing.edition)
+    editionCounts.set(edition, (editionCounts.get(edition) ?? 0) + 1)
+    const finish = normalizedIdentityKey(printing.finish)
+    finishCounts.set(finish, (finishCounts.get(finish) ?? 0) + 1)
+    if (hasCompoundFinish(printing.finish)) compoundFinishCount += 1
+    if (hasEmbeddedEdition(printing.finish)) embeddedEditionInFinishCount += 1
+    const physicalIdentity = physicalIdentityKey(printing)
+    physicalIdentities.set(
+      physicalIdentity,
+      (physicalIdentities.get(physicalIdentity) ?? 0) + 1,
+    )
   }
+  const duplicatePhysicalIdentityCount = [
+    ...physicalIdentities.values(),
+  ].filter((item) => item > 1).length
+  if (duplicatePhysicalIdentityCount > 0)
+    issues.push({
+      severity: 'warning',
+      code: 'duplicate-physical-identity',
+      message: `${duplicatePhysicalIdentityCount} canonical printing identities are duplicated`,
+    })
   const counts = {
     games: catalog.games.length,
     sets: catalog.sets.length,
@@ -134,6 +198,14 @@ export function validateCatalog(catalog: NormalizedCatalog): ValidationReport {
     valid: !issues.some((item) => item.severity === 'error'),
     counts,
     issues,
+    identityAudit: {
+      printingsByLanguage: mapCounts(languageCounts),
+      printingsByEdition: mapCounts(editionCounts),
+      printingsByFinish: mapCounts(finishCounts),
+      compoundFinishCount,
+      editionEmbeddedInFinishCount: embeddedEditionInFinishCount,
+      duplicatePhysicalIdentityCount,
+    },
   }
 }
 

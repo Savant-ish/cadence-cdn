@@ -6,19 +6,38 @@ import {
   validateProviderPriceFeed,
 } from '../src/pricing/ingest.js'
 
-const printing = (id: string, productId: string): CatalogPrinting => ({
-  id,
-  identityKey: `v1:${id}`,
-  cardId: 'cadence:card:test',
-  setId: 'cadence:set:test',
-  language: 'en',
-  externalIds: { 'tcgplayer.productId': productId },
-  provenance: {
-    provider: 'fixture',
-    release: 'fixture',
-    importedAt: '2026-09-07T00:00:00Z',
+const printing = (
+  id: string,
+  productId: string,
+  values?: {
+    language?: string
+    edition?: string
+    finish?: string
+    externalIds?: Record<string, string>
+    includeBaseProductId?: boolean
   },
-})
+): CatalogPrinting => {
+  const includeBaseProductId = values?.includeBaseProductId ?? true
+  const externalIds: Record<string, string> = {
+    ...(values?.externalIds ?? {}),
+  }
+  if (includeBaseProductId) externalIds['tcgplayer.productId'] = productId
+  return {
+    id,
+    identityKey: `v1:${id}`,
+    cardId: 'cadence:card:test',
+    setId: 'cadence:set:test',
+    language: values?.language ?? 'en',
+    ...(values?.edition ? { edition: values.edition } : {}),
+    ...(values?.finish ? { finish: values.finish } : {}),
+    externalIds,
+    provenance: {
+      provider: 'fixture',
+      release: 'fixture',
+      importedAt: '2026-09-07T00:00:00Z',
+    },
+  }
+}
 
 const feed = {
   schemaVersion: 1,
@@ -32,7 +51,6 @@ const feed = {
       observedAt: '2026-09-07T11:59:00Z',
       currency: 'USD',
       condition: 'near-mint',
-      finish: 'normal',
       channel: 'retail',
       prices: { market: 1234, low: 1100 },
       sourceUrl: 'https://example.test/product/704848',
@@ -69,6 +87,89 @@ test('rejects ambiguous product mappings rather than guessing', () => {
       printing('cadence:printing:a', '704848'),
       printing('cadence:printing:b', '704848'),
     ],
+    'catalog-build-1',
+  )
+  assert.equal(batch.observations.length, 0)
+  assert.equal(batch.rejected[0]?.reason, 'ambiguous-product')
+})
+
+test('matches pricing observations to the correct variant when external IDs collide', () => {
+  const batch = normalizePricingFeed(
+    {
+      ...feed,
+      observations: [
+        {
+          ...feed.observations[0],
+          providerProductId: '704848',
+          finish: 'Reverse Holofoil',
+        },
+      ],
+    },
+    [
+      printing('cadence:printing:normal', '704848', {
+        finish: 'Normal',
+        externalIds: { 'tcgplayer.productId:standard:Normal': '704848' },
+      }),
+      printing('cadence:printing:reverse', '704848', {
+        finish: 'Reverse Holofoil',
+        externalIds: {
+          'tcgplayer.productId:standard:Reverse Holofoil': '704848',
+        },
+      }),
+    ],
+    'catalog-build-1',
+  )
+  assert.equal(batch.observations.length, 1)
+  assert.equal(batch.observations[0]?.printingId, 'cadence:printing:reverse')
+})
+
+test('maps provider product IDs to variant-specific external IDs', () => {
+  const batch = normalizePricingFeed(
+    {
+      ...feed,
+      observations: [
+        {
+          ...feed.observations[0],
+          providerProductId: '704848',
+          finish: 'Reverse Holofoil',
+        },
+      ],
+    },
+    [
+      printing('cadence:printing:normal', '704848', {
+        finish: 'Normal',
+        includeBaseProductId: false,
+        externalIds: {
+          'tcgplayer.productId:standard:Normal': '704848',
+        },
+      }),
+      printing('cadence:printing:reverse', '704848', {
+        finish: 'Reverse Holofoil',
+        includeBaseProductId: false,
+        externalIds: {
+          'tcgplayer.productId:standard:Reverse Holofoil': '704848',
+        },
+      }),
+    ],
+    'catalog-build-1',
+  )
+  assert.equal(batch.observations.length, 1)
+  assert.equal(batch.observations[0]?.printingId, 'cadence:printing:reverse')
+})
+
+test('rejects ambiguous pricing observations when variant semantics do not match', () => {
+  const batch = normalizePricingFeed(
+    {
+      ...feed,
+      observations: [
+        {
+          ...feed.observations[0],
+          providerProductId: '704848',
+          finish: 'Reverse Holofoil',
+        },
+      ],
+    },
+    [printing('cadence:printing:normal', '704848', { finish: 'Normal' })],
     'catalog-build-1',
   )
   assert.equal(batch.observations.length, 0)

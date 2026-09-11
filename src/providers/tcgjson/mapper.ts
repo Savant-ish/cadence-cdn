@@ -52,6 +52,87 @@ function attribute(
   return undefined
 }
 
+interface PrintingVariant {
+  finish?: string
+  edition?: string
+}
+
+const EDITION_PATTERN =
+  /\b(?:\d+(?:st|nd|rd|th)?\s+edition|first\s+edition|unlimited)\b/i
+const VARIANT_SPLIT_PATTERN = /\s*[;,/]\s*|\s*,\s*/
+const EXTERNAL_ID_PREFIX = 'tcgplayer.productId'
+
+function normalizeValue(value: string): string {
+  return value.replace(/\s+/g, ' ').trim()
+}
+
+function normalizeEdition(value: string): string {
+  const normalized = normalizeValue(value).toLowerCase()
+  if (normalized === '1st edition' || normalized === 'first edition')
+    return '1st Edition'
+  if (normalized === 'unlimited') return 'Unlimited'
+  if (normalized === '1st') return '1st Edition'
+  return normalizeValue(value)
+}
+
+function splitVariantValues(value: string | undefined): string[] {
+  return value
+    ? value
+        .split(VARIANT_SPLIT_PATTERN)
+        .map((item) => item.trim())
+        .filter(Boolean)
+    : []
+}
+
+function parseFinishAndEdition(value: string): PrintingVariant {
+  const normalized = normalizeValue(value)
+  const match = normalized.match(EDITION_PATTERN)
+  if (!match) return { finish: normalized }
+  const finish = normalizeValue(normalized.replace(match[0], ''))
+  return {
+    edition: normalizeEdition(match[0]),
+    ...(finish ? { finish } : {}),
+  }
+}
+
+function buildVariants(
+  rawFinish: string | undefined,
+  rawEdition: string | undefined,
+): PrintingVariant[] {
+  const explicitEditions = splitVariantValues(rawEdition).map(normalizeEdition)
+  const finishValues = splitVariantValues(rawFinish)
+  const variants: PrintingVariant[] = []
+  const seen = new Set<string>()
+  const sourceFinishes =
+    finishValues.length > 0 ? finishValues : [undefined as string | undefined]
+  for (const rawFinishValue of sourceFinishes) {
+    const parsed = rawFinishValue ? parseFinishAndEdition(rawFinishValue) : {}
+    const editions =
+      explicitEditions.length > 0
+        ? explicitEditions
+        : parsed.edition
+          ? [parsed.edition]
+          : []
+    for (const edition of editions.length ? editions : [undefined]) {
+      const finish = parsed.finish
+      const key = `${edition ?? ''}|${finish ?? ''}`
+      if (seen.has(key)) continue
+      seen.add(key)
+      const variant: PrintingVariant = {}
+      if (edition) variant.edition = edition
+      if (finish) variant.finish = finish
+      variants.push(variant)
+    }
+  }
+  if (!variants.length) variants.push({})
+  variants.sort(
+    (a, b) =>
+      `${a.edition ?? ''}`.localeCompare(`${b.edition ?? ''}`) ||
+      `${a.finish ?? ''}`.localeCompare(`${b.finish ?? ''}`),
+  )
+  return variants
+}
+
 export function isPokemonCodeCard(product: TcgjsonProduct): boolean {
   const name = optionalText(product.cleanName) ?? optionalText(product.name)
   const attrs = customAttributes(product.metadata)
@@ -158,7 +239,7 @@ async function mapTcgjsonGame(
   const cards = new Map<string, CatalogCard>()
   const printings = retainedProducts
     .sort((a, b) => String(a.productId).localeCompare(String(b.productId)))
-    .map((product) => {
+    .flatMap((product) => {
       const externalId = optionalText(product.productId)
       const name = optionalText(product.cleanName) ?? optionalText(product.name)
       const sourceSetId =
@@ -197,43 +278,55 @@ async function mapTcgjsonGame(
         attribute(attrs, 'finish', 'printing')
       const edition =
         optionalText(product.edition) ?? attribute(attrs, 'edition')
-      const variant = [finish, edition].filter(Boolean).join('-') || 'standard'
-      const printingIdentity = createIdentity(
-        'printing',
-        options.slug,
-        set.identityKey,
-        normalizedName,
-        collectorNumber
-          ? normalizeCollectorNumber(collectorNumber)
-          : `unnumbered-${normalizedName}`,
-        language,
-        variant,
-      )
       const sourceUrl = optionalText(product.url)
       const imageUrl =
         optionalText(product.imageUrl) ??
         product.imageUrls?.find((url) => Boolean(url))
       const rarity = optionalText(product.rarity) ?? attribute(attrs, 'rarity')
-      return {
-        ...printingIdentity,
-        cardId: cardIdentity.id,
-        setId: set.id,
-        ...(collectorNumber ? { collectorNumber } : {}),
-        ...(rarity ? { rarity } : {}),
-        language,
-        ...(finish ? { finish } : {}),
-        ...(edition ? { edition } : {}),
-        image: imageUrl
-          ? { sourceUrl: imageUrl, status: 'reference-only' as const }
-          : { status: 'unavailable' as const },
-        externalIds: { 'tcgplayer.productId': externalId },
-        provenance: {
-          provider: 'tcgjson',
-          release: context.release.id,
-          ...(sourceUrl ? { sourceUrl } : {}),
-          importedAt: context.importedAt,
-        },
-      }
+      const variants = buildVariants(finish, edition)
+      const collectorIdentity = collectorNumber
+        ? normalizeCollectorNumber(collectorNumber)
+        : `unnumbered-${normalizedName}`
+      return variants.map((variant) => {
+        const printingIdentity = createIdentity(
+          'printing',
+          options.slug,
+          set.identityKey,
+          normalizedName,
+          collectorIdentity,
+          language,
+          variant.edition ?? 'standard',
+          variant.finish ?? 'standard',
+        )
+        const hasMultipleVariants = variants.length > 1
+        const finishKey = variant.finish ? variant.finish : 'standard'
+        const editionKey = variant.edition ? variant.edition : 'standard'
+        const variantKey = `${EXTERNAL_ID_PREFIX}:${editionKey}:${finishKey}`
+        const externalIds: Record<string, string> = {
+          ...(hasMultipleVariants ? {} : { [EXTERNAL_ID_PREFIX]: externalId }),
+          [variantKey]: externalId,
+        }
+        return {
+          ...printingIdentity,
+          cardId: cardIdentity.id,
+          setId: set.id,
+          ...(collectorNumber ? { collectorNumber } : {}),
+          ...(rarity ? { rarity } : {}),
+          language,
+          ...(variant.finish ? { finish: variant.finish } : {}),
+          ...(variant.edition ? { edition: variant.edition } : {}),
+          image: imageUrl
+            ? { sourceUrl: imageUrl, status: 'reference-only' as const }
+            : { status: 'unavailable' as const },
+          externalIds,
+          provenance: {
+            provider: 'tcgjson',
+            release: context.release.id,
+            ...(sourceUrl ? { sourceUrl } : {}),
+            importedAt: context.importedAt,
+          },
+        }
+      })
     })
 
   return {

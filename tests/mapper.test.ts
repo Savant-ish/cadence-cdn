@@ -81,7 +81,7 @@ test('maps Disney Lorcana as an independent game catalog', async () => {
       cards: catalog.cards.length,
       printings: catalog.printings.length,
     },
-    { sets: 1, cards: 2, printings: 2 },
+    { sets: 1, cards: 2, printings: 3 },
   )
   assert.ok(catalog.cards.some((card) => card.cardType === 'Character'))
   assert.ok(
@@ -89,6 +89,15 @@ test('maps Disney Lorcana as an independent game catalog', async () => {
       printing.identityKey.includes('lorcana'),
     ),
   )
+  const finishes = catalog.printings
+    .map((printing) => printing.finish)
+    .filter((finish): finish is string => Boolean(finish))
+    .sort()
+  assert.ok(
+    finishes.includes('Holofoil') && finishes.includes('Normal'),
+    `expected split finish variants, got ${finishes.join(', ')}`,
+  )
+  assert.ok(!finishes.some((finish) => finish.includes(',')))
 })
 
 test('excludes Pokemon code-card products using narrow source signals', () => {

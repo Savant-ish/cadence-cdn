@@ -94,10 +94,27 @@ export interface ValidationIssue {
   message: string
 }
 
+export interface CatalogIdentityAudit {
+  printingsByLanguage: Record<string, number>
+  printingsByEdition: Record<string, number>
+  printingsByFinish: Record<string, number>
+  compoundFinishCount: number
+  editionEmbeddedInFinishCount: number
+  duplicatePhysicalIdentityCount: number
+  stableIdComparison?: {
+    previousBuildId: string
+    stableMatches: number
+    addedIdentities: number
+    missingIdentities: number
+    unstablePrintingIds: number
+  }
+}
+
 export interface ValidationReport {
   valid: boolean
   counts: Record<'games' | 'sets' | 'cards' | 'printings', number>
   issues: ValidationIssue[]
+  identityAudit?: CatalogIdentityAudit
   overrides?: {
     changeSets: number
     operations: number
