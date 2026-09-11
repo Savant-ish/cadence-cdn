@@ -36,7 +36,7 @@ Pokemon era and set-kind assignments are maintained as reviewed Cadence taxonomy
 
 Bulk metadata corrections are expressed as reviewed catalog change sets. See [catalog bulk administration](docs/catalog-admin.md). Provider snapshots and published R2 objects are never edited in place.
 
-Pricing remains a separate append-oriented domain and is not embedded in catalog builds. The working pricing proof currently in this repository is scheduled for extraction into `cadence-pricing`; do not expand it here.
+Pricing is a separate append-oriented domain and is not embedded in catalog builds. The pricing commands in this repository are a historical bridge: TCGCSV catalog imports originally included price fields, so the first ingestion and publication path lived here. `cadence-pricing` now owns daily price acquisition, observations, and valuation publication; its current production scope is Pokemon. Do not expand pricing behavior here. This repository remains the authoritative source of catalog metadata, stable Cadence identities, and provider-ID crosswalks used by pricing consumers.
 
 Daily TCGCSV pricing snapshots can be acquired with `npm run pricing:fetch:tcgcsv -- --category-id <id>`. The adapter follows TCGCSV's timestamp, user-agent, throttling, and local-cache guidance.
 
