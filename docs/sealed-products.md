@@ -41,6 +41,11 @@ Inventory references a sealed configuration ID, never a card printing ID. Cases 
 
 ## Publication and administration
 
+Until product metadata is pinned and classified, cadence-pricing retains full
+unresolved TCGCSV price observations separately. This preserves potential
+sealed market data without allowing an unmatched product to become a sealed
+catalog record or a card valuation.
+
 Sealed artifacts should publish under distinct per-game paths and participate in catalog validation, deterministic build identity, checksums, GitHub release archival, and atomic R2 publication. Adding the public contract requires a schema-version review and cadence-web coordination.
 
 The admin workbench should expose sealed candidates, confidence/reasons, uncertain classifications, duplicate crosswalks, product family, included sets, configuration, UPC, and reference image. Only reviewed classifications enter production. TCGCSV product-level pricing may help `cadence-pricing`, but price fields must not be embedded in sealed catalog records.
