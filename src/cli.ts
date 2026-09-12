@@ -18,6 +18,7 @@ import { fetchTcgcsvPricing } from './pricing/tcgcsv.js'
 import { packagePricingBatch, publishPricingToR2 } from './pricing/publish.js'
 import { fetchPublishedPrintings } from './pricing/catalog-source.js'
 import { publishSealedCandidates } from './sealed/import.js'
+import { fetchSealedCandidates } from './sealed/source.js'
 
 function args(tokens: string[]): {
   command?: string
@@ -52,8 +53,20 @@ async function main(): Promise<void> {
   const parsed = args(process.argv.slice(2))
   if (parsed.flags.has('help') || !parsed.command) {
     console.log(
-      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|sealed-import|taxonomy-suggest|taxonomy-report|admin-validate|pricing-ingest|pricing-fetch-tcgcsv|pricing-fetch-catalog|pricing-package|pricing-publish-r2> [options]',
+      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|sealed-fetch|sealed-import|taxonomy-suggest|taxonomy-report|admin-validate|pricing-ingest|pricing-fetch-tcgcsv|pricing-fetch-catalog|pricing-package|pricing-publish-r2> [options]',
     )
+    return
+  }
+  if (parsed.command === 'sealed-fetch') {
+    const result = await fetchSealedCandidates({
+      latestUrl: textFlag(
+        parsed.flags,
+        'latest-url',
+        'https://cdn.cadencetcg.dev/pricing/latest.json',
+      ),
+      output: resolve(textFlag(parsed.flags, 'output', 'snapshots/sealed/candidates.json')),
+    })
+    console.log(`Fetched verified sealed candidates: ${result.bytes} bytes`)
     return
   }
   if (parsed.command === 'sealed-import') {
