@@ -61,6 +61,7 @@ const EDITION_PATTERN =
   /\b(?:\d+(?:st|nd|rd|th)?\s+edition|first\s+edition|unlimited)\b/i
 const VARIANT_SPLIT_PATTERN = /\s*[;,/]\s*|\s*,\s*/
 const EXTERNAL_ID_PREFIX = 'tcgplayer.productId'
+const CODE_CARD_PATTERN = /\bcode cards?\b/i
 
 function normalizeValue(value: string): string {
   return value.replace(/\s+/g, ' ').trim()
@@ -139,8 +140,7 @@ export function isPokemonCodeCard(product: TcgjsonProduct): boolean {
   const rarity =
     optionalText(product.rarity) ?? attribute(attrs, 'rarityDbName', 'rarity')
   return (
-    /^code card(?:\s*-|$)/i.test(name ?? '') ||
-    rarity?.toLowerCase() === 'code card'
+    CODE_CARD_PATTERN.test(name ?? '') || rarity?.toLowerCase() === 'code card'
   )
 }
 

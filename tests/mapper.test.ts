@@ -118,6 +118,13 @@ test('excludes Pokemon code-card products using narrow source signals', () => {
   )
   assert.equal(
     isPokemonCodeCard({
+      productId: 4,
+      name: 'Pokemon TCG Live Code Card - Silver Tempest',
+    }),
+    true,
+  )
+  assert.equal(
+    isPokemonCodeCard({
       productId: 3,
       name: 'Porygon',
       metadata: { flavorText: 'A Pokemon made of programming code.' },
