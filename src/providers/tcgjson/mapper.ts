@@ -1,6 +1,5 @@
 import type {
   CatalogCard,
-  CatalogPrinting,
   CatalogSet,
   ImportContext,
   NormalizedCatalog,
@@ -134,23 +133,6 @@ function buildVariants(
   return variants
 }
 
-function deduplicatePrintings(printings: CatalogPrinting[]): CatalogPrinting[] {
-  const byId = new Map<string, CatalogPrinting>()
-  for (const printing of printings) {
-    const existing = byId.get(printing.id)
-    if (!existing) {
-      byId.set(printing.id, printing)
-      continue
-    }
-    if (JSON.stringify(existing) !== JSON.stringify(printing)) {
-      throw new Error(
-        `tcgjson products conflict on canonical printing identity: ${printing.id}`,
-      )
-    }
-  }
-  return [...byId.values()]
-}
-
 export function isPokemonCodeCard(product: TcgjsonProduct): boolean {
   const name = optionalText(product.cleanName) ?? optionalText(product.name)
   const attrs = customAttributes(product.metadata)
@@ -255,7 +237,7 @@ async function mapTcgjsonGame(
   }
 
   const cards = new Map<string, CatalogCard>()
-  const sourcePrintings = retainedProducts
+  const printings = retainedProducts
     .sort((a, b) => String(a.productId).localeCompare(String(b.productId)))
     .flatMap((product) => {
       const externalId = optionalText(product.productId)
@@ -353,8 +335,6 @@ async function mapTcgjsonGame(
       a.id.localeCompare(b.id),
     ),
     cards: [...cards.values()].sort((a, b) => a.id.localeCompare(b.id)),
-    printings: deduplicatePrintings(sourcePrintings).sort((a, b) =>
-      a.id.localeCompare(b.id),
-    ),
+    printings: printings.sort((a, b) => a.id.localeCompare(b.id)),
   }
 }
