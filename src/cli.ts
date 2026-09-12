@@ -17,6 +17,7 @@ import { ingestPricingFile } from './pricing/ingest.js'
 import { fetchTcgcsvPricing } from './pricing/tcgcsv.js'
 import { packagePricingBatch, publishPricingToR2 } from './pricing/publish.js'
 import { fetchPublishedPrintings } from './pricing/catalog-source.js'
+import { publishSealedCandidates } from './sealed/import.js'
 
 function args(tokens: string[]): {
   command?: string
@@ -51,8 +52,22 @@ async function main(): Promise<void> {
   const parsed = args(process.argv.slice(2))
   if (parsed.flags.has('help') || !parsed.command) {
     console.log(
-      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|taxonomy-suggest|taxonomy-report|admin-validate|pricing-ingest|pricing-fetch-tcgcsv|pricing-fetch-catalog|pricing-package|pricing-publish-r2> [options]',
+      'Usage: catalog <fetch|build|validate|admin-preview|verify-manifest|package-release|publish-r2|sealed-import|taxonomy-suggest|taxonomy-report|admin-validate|pricing-ingest|pricing-fetch-tcgcsv|pricing-fetch-catalog|pricing-package|pricing-publish-r2> [options]',
     )
+    return
+  }
+  if (parsed.command === 'sealed-import') {
+    const source = JSON.parse(
+      await (await import('node:fs/promises')).readFile(
+        resolve(textFlag(parsed.flags, 'input')),
+        'utf8',
+      ),
+    ) as unknown
+    const result = await publishSealedCandidates(
+      source,
+      resolve(textFlag(parsed.flags, 'output', 'sealed-dist')),
+    )
+    console.log(`Published sealed build ${result.buildId}: ${result.products} products`)
     return
   }
   if (parsed.command === 'pricing-fetch-catalog') {
