@@ -42,6 +42,22 @@ test('maps Pokemon while keeping cards distinct from printings', async () => {
   )
 })
 
+test('deduplicates repeated TCGJSON products with the same canonical printing identity', async () => {
+  const input = (await readJson('fixtures/tcgjson/pokemon.sample.json')) as any
+  input.products.push({ ...input.products[0] })
+  const catalog = await mapPokemon(input, {
+    release: {
+      provider: 'tcgjson',
+      id: 'fixture',
+      manifestUrl: 'fixture://manifest',
+      artifactUrl: 'fixture://pokemon',
+      artifactName: 'pokemon.json',
+    },
+    importedAt: '2026-09-01T00:00:00.000Z',
+  })
+  assert.equal(catalog.printings.length, 3)
+})
+
 test('maps One Piece using the Cadence onepiece slug', async () => {
   const input = await readJson('fixtures/tcgjson/onepiece.sample.json')
   const catalog = await mapOnePiece(input, {
