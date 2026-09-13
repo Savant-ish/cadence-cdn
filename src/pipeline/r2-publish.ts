@@ -275,3 +275,36 @@ export async function publishCatalogToR2(
     store,
   )
 }
+
+export async function publishSealedToR2(
+  options: R2PublicationOptions,
+): Promise<{ buildId: string; uploaded: number; skipped: number }> {
+  const client = new S3Client({
+    region: 'auto',
+    endpoint: `https://${options.accountId}.r2.cloudflarestorage.com`,
+    credentials: { accessKeyId: options.accessKeyId, secretAccessKey: options.secretAccessKey },
+  })
+  const base = normalizedBaseUrl(options.publicBaseUrl)
+  const store: ObjectStore = {
+    async head(key) {
+      try {
+        const result = await client.send(new HeadObjectCommand({ Bucket: options.bucket, Key: key }))
+        return result.Metadata?.sha256 ? { sha256: result.Metadata.sha256 } : {}
+      } catch (error: unknown) {
+        if ((error as { $metadata?: { httpStatusCode?: number } }).$metadata?.httpStatusCode === 404) return undefined
+        throw error
+      }
+    },
+    async put(key, body, metadata) {
+      await client.send(new PutObjectCommand({ Bucket: options.bucket, Key: key, Body: body, ContentType: metadata.contentType, CacheControl: metadata.cacheControl, Metadata: { sha256: metadata.sha256 } }))
+    },
+    async verifyPublic(key, expected) {
+      const response = await fetch(`${base}/${key}`, { signal: AbortSignal.timeout(120_000) })
+      if (!response.ok) throw new Error(`Public sealed verification failed: ${key}`)
+      const body = Buffer.from(await response.arrayBuffer())
+      if (body.length !== expected.bytes || sha256(body) !== expected.sha256)
+        throw new Error(`Public sealed verification mismatch: ${key}`)
+    },
+  }
+  return publishSealedToStore(resolve(options.root), options.publicBaseUrl, store)
+}

@@ -1,0 +1,44 @@
+name: Publish sealed catalog
+
+on:
+  schedule:
+    - cron: '15 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-sealed-catalog
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+      - run: npm run build --silent && node build/src/cli.js sealed-fetch --output snapshots/sealed/candidates.json
+      - run: npm run build --silent && node build/src/cli.js sealed-import --input snapshots/sealed/candidates.json --output sealed-dist
+      - name: Publish sealed catalog to Cloudflare R2
+        if: vars.R2_CATALOG_BUCKET != '' && vars.R2_PUBLIC_BASE_URL != ''
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_CATALOG_BUCKET: ${{ vars.R2_CATALOG_BUCKET }}
+          R2_PUBLIC_BASE_URL: ${{ vars.R2_PUBLIC_BASE_URL }}
+        run: npm run build --silent && node build/src/cli.js sealed-publish-r2 --root sealed-dist
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: sealed-publication-${{ github.run_id }}
+          path: sealed-dist/
+          if-no-files-found: warn
+          retention-days: 14
