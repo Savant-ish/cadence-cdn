@@ -140,6 +140,60 @@ export async function publishCatalogToStore(
   return { buildId: manifest.buildId, uploaded, skipped }
 }
 
+export async function publishSealedToStore(
+  root: string,
+  publicBaseUrl: string,
+  store: ObjectStore,
+): Promise<{ buildId: string; uploaded: number; skipped: number }> {
+  const manifest = JSON.parse(
+    await readFile(resolve(root, 'sealed', 'manifest.json'), 'utf8'),
+  ) as { schemaVersion: number; buildId: string; generatedAt: string; game: string }
+  if (!/^[a-f0-9]{16}$/.test(manifest.buildId))
+    throw new Error('Sealed manifest contains an invalid build ID')
+  const prefix = `sealed/builds/${manifest.buildId}`
+  const files = await filesUnder(resolve(root, 'sealed'))
+  let uploaded = 0
+  let skipped = 0
+  const published: PublishedObject[] = []
+  for (const path of files) {
+    const body = await readFile(path)
+    const digest = sha256(body)
+    const key = `${prefix}/${objectPath(resolve(root, 'sealed'), path)}`
+    published.push({ key, bytes: body.length, sha256: digest })
+    const existing = await store.head(key)
+    if (existing) {
+      if (existing.sha256 !== digest)
+        throw new Error(`Refusing to overwrite conflicting immutable object: ${key}`)
+      skipped += 1
+    } else {
+      await store.put(key, body, {
+        contentType: 'application/json; charset=utf-8',
+        cacheControl: 'public, max-age=31536000, immutable',
+        sha256: digest,
+      })
+      if ((await store.head(key))?.sha256 !== digest)
+        throw new Error(`R2 upload verification failed: ${key}`)
+      uploaded += 1
+    }
+  }
+  await verifyPublicObjects(store, published)
+  const base = normalizedBaseUrl(publicBaseUrl)
+  const latest = Buffer.from(stableJson({
+    schemaVersion: manifest.schemaVersion,
+    buildId: manifest.buildId,
+    generatedAt: manifest.generatedAt,
+    game: manifest.game,
+    manifestUrl: `${base}/${prefix}/manifest.json`,
+    sealedBaseUrl: `${base}/${prefix}`,
+  }))
+  await store.put('sealed/latest.json', latest, {
+    contentType: 'application/json; charset=utf-8',
+    cacheControl: 'public, max-age=60, must-revalidate',
+    sha256: sha256(latest),
+  })
+  return { buildId: manifest.buildId, uploaded, skipped }
+}
+
 export async function publishCatalogToR2(
   options: R2PublicationOptions,
 ): Promise<{ buildId: string; uploaded: number; skipped: number }> {
