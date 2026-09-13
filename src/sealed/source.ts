@@ -28,10 +28,10 @@ export async function fetchSealedCandidates(options: {
     if (!response.ok) throw new Error(`Fetch failed: ${response.status} ${url}`)
     return response.json()
   }
-  const latest = object(await getJson(options.latestUrl), 'Pricing latest') as PricingLatest
+  const latest = object(await getJson(options.latestUrl), 'Pricing latest') as unknown as PricingLatest
   if (!latest.manifestUrl || !latest.pricingBaseUrl)
     throw new Error('Pricing latest is missing manifestUrl or pricingBaseUrl')
-  const manifest = object(await getJson(latest.manifestUrl), 'Pricing manifest') as PricingManifest
+  const manifest = object(await getJson(latest.manifestUrl), 'Pricing manifest') as unknown as PricingManifest
   const artifact = manifest.artifacts?.find(
     (item) => item.path === 'sealed-candidates.json',
   )
