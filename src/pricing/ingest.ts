@@ -16,6 +16,97 @@ function object(value: unknown, label: string): Record<string, unknown> {
   return value as Record<string, unknown>
 }
 
+const EDITION_PATTERN =
+  /\b(?:\d+(?:st|nd|rd|th)?\s+edition|first\s+edition|unlimited)\b/i
+
+function normalizeValue(value: string): string {
+  return value.replace(/\s+/g, ' ').trim()
+}
+
+function normalizeEdition(value: string): string {
+  const normalized = normalizeValue(value).toLowerCase()
+  if (normalized === '1st edition' || normalized === 'first edition')
+    return '1st edition'
+  if (normalized === 'unlimited') return 'unlimited'
+  if (normalized === '1st') return '1st edition'
+  return normalizeValue(value)
+}
+
+function normalizeVariantField(value: string | undefined): string | undefined {
+  const normalized = normalizeValue(value ?? '')
+  return normalized ? normalized.toLowerCase() : undefined
+}
+
+interface CatalogVariant {
+  language?: string
+  edition?: string
+  finish?: string
+}
+
+function extractObservationVariant(
+  observation: ProviderPriceObservation,
+): CatalogVariant {
+  const language = normalizeVariantField(
+    (observation as { language?: string }).language,
+  )
+  const explicitEdition = normalizeVariantField(
+    (observation as { edition?: string }).edition,
+  )
+  const rawFinish = normalizeValue(
+    (observation as { finish?: string }).finish ?? '',
+  )
+  if (!rawFinish) {
+    return {
+      ...(language ? { language } : {}),
+      ...(explicitEdition ? { edition: explicitEdition } : {}),
+    }
+  }
+  const match = rawFinish.match(EDITION_PATTERN)
+  if (!match) {
+    return {
+      ...(language ? { language } : {}),
+      finish: normalizeValue(rawFinish).toLowerCase(),
+    }
+  }
+  const finish = normalizeVariantField(rawFinish.replace(match[0], ''))
+  const edition = explicitEdition
+    ? explicitEdition
+    : normalizeEdition(match[0]).toLowerCase()
+  return {
+    ...(language ? { language } : {}),
+    ...(edition ? { edition } : {}),
+    ...(finish ? { finish } : {}),
+  }
+}
+
+function isCandidateMatch(
+  observation: ProviderPriceObservation,
+  printing: CatalogPrinting,
+): boolean {
+  const requested = extractObservationVariant(observation)
+  const observedLanguage = requested.language
+  const observedEdition = requested.edition
+  const observedFinish = requested.finish
+  if (
+    observedLanguage &&
+    normalizeVariantField(printing.language) !== observedLanguage
+  )
+    return false
+  if (observedEdition) {
+    if (!printing.edition) return false
+    if (normalizeEdition(printing.edition).toLowerCase() !== observedEdition)
+      return false
+  }
+  if (observedFinish && !printing.finish) return false
+  if (
+    observedFinish &&
+    normalizeVariantField(printing.finish) !== observedFinish
+  ) {
+    return false
+  }
+  return true
+}
+
 function requiredString(value: unknown, label: string): string {
   if (typeof value !== 'string' || !value.trim())
     throw new Error(`${label} must be a non-empty string`)
@@ -103,33 +194,46 @@ export function normalizePricingFeed(
 ): PricingBatch {
   const feed = validateProviderPriceFeed(rawFeed)
   const printingIds = new Set(printings.map((item) => item.id))
+  const externalIdKey = feed.externalIdKey
   if (!catalogBuildId.trim()) throw new Error('catalogBuildId is required')
-  const byExternalId = new Map<string, string[]>()
+  const byExternalId = new Map<string, CatalogPrinting[]>()
   for (const printing of printings) {
     if (!printingIds.has(printing.id)) continue
-    const externalId = printing.externalIds[feed.externalIdKey]
-    if (!externalId) continue
-    byExternalId.set(externalId, [
-      ...(byExternalId.get(externalId) ?? []),
-      printing.id,
-    ])
+    const printedIds = new Set<string>()
+    for (const [provider, externalId] of Object.entries(printing.externalIds)) {
+      if (
+        provider !== externalIdKey &&
+        !provider.startsWith(`${externalIdKey}:`)
+      )
+        continue
+      if (!externalId || printedIds.has(externalId)) continue
+      printedIds.add(externalId)
+      const existing = byExternalId.get(externalId)
+      if (existing?.some((item) => item.id === printing.id)) continue
+      byExternalId.set(externalId, [...(existing ?? []), printing])
+    }
   }
   const observations: NormalizedPriceObservation[] = []
   const rejected: PricingBatch['rejected'] = []
   for (const item of feed.observations) {
-    const matches = byExternalId.get(item.providerProductId) ?? []
+    const potentialMatches = byExternalId.get(item.providerProductId) ?? []
+    const matches = potentialMatches.filter((printing) =>
+      isCandidateMatch(item, printing),
+    )
     if (matches.length !== 1) {
       rejected.push({
         providerProductId: item.providerProductId,
         ...(item.providerSkuId ? { providerSkuId: item.providerSkuId } : {}),
-        reason: matches.length ? 'ambiguous-product' : 'unknown-product',
+        reason: potentialMatches.length
+          ? 'ambiguous-product'
+          : 'unknown-product',
       })
       continue
     }
     observations.push({
       ...item,
       id: observationId(feed.provider, item),
-      printingId: matches[0]!,
+      printingId: matches[0]!.id,
     })
   }
   observations.sort((a, b) => a.id.localeCompare(b.id))

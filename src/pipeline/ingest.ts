@@ -1,7 +1,11 @@
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { access, readFile } from 'node:fs/promises'
 import { TcgjsonProvider, loadSnapshot } from '../providers/tcgjson/client.js'
-import type { SourceRelease } from '../domain/catalog.js'
+import type {
+  CatalogPrinting,
+  SourceRelease,
+  ValidationReport,
+} from '../domain/catalog.js'
 import {
   assertValid,
   checkCountRegression,
@@ -41,6 +45,118 @@ export interface BundleBuildOptions extends Omit<
   'snapshot' | 'releaseFile' | 'game'
 > {
   sources: BuildSource[]
+}
+
+interface ManifestArtifact {
+  path: string
+}
+
+interface ManifestFile {
+  buildId?: string
+  artifacts?: ManifestArtifact[]
+}
+
+function canonicalIdentityKey(printing: CatalogPrinting): string {
+  const normalize = (value: string | undefined): string =>
+    value?.trim() ? value.trim() : '(unknown)'
+  return [
+    printing.cardId,
+    printing.setId,
+    printing.language,
+    normalize(printing.edition),
+    normalize(printing.finish),
+  ].join('|')
+}
+
+async function compareStablePrintingIds(
+  report: ValidationReport,
+  currentPrintings: CatalogPrinting[],
+  previousManifestPath: string | undefined,
+): Promise<void> {
+  if (!previousManifestPath) return
+  let previous: ManifestFile
+  try {
+    previous = JSON.parse(
+      await readFile(previousManifestPath, 'utf8'),
+    ) as ManifestFile
+  } catch (error) {
+    report.issues.push({
+      severity: 'warning',
+      code: 'manifest-read-failure',
+      message: `Could not read previous manifest: ${String(error)}`,
+    })
+    return
+  }
+  const artifactPaths = (previous.artifacts ?? []).filter((item) =>
+    /^games\/[^/]+\/printings\.json$/i.test(item.path),
+  )
+  if (!artifactPaths.length) {
+    report.issues.push({
+      severity: 'warning',
+      code: 'previous-printings-missing',
+      message:
+        'No previous per-game printings artifacts were found in prior manifest',
+    })
+    return
+  }
+  const previousRoot = dirname(previousManifestPath)
+  const previousPrintings = [] as CatalogPrinting[]
+  for (const artifact of artifactPaths) {
+    try {
+      const rows = JSON.parse(
+        await readFile(join(previousRoot, artifact.path), 'utf8'),
+      ) as unknown
+      if (Array.isArray(rows))
+        previousPrintings.push(...(rows as CatalogPrinting[]))
+    } catch (error) {
+      report.issues.push({
+        severity: 'warning',
+        code: 'previous-printings-read-failed',
+        message: `${artifact.path} could not be loaded from previous manifest: ${String(error)}`,
+      })
+    }
+  }
+  if (!previousPrintings.length) return
+  const previousBuildId = previous.buildId ?? 'unknown'
+  const previousByIdentity = new Map<string, string>(
+    previousPrintings.map((item) => [canonicalIdentityKey(item), item.id]),
+  )
+  const currentByIdentity = new Map<string, string>()
+  let unstablePrintingIds = 0
+  for (const printing of currentPrintings) {
+    const identity = canonicalIdentityKey(printing)
+    currentByIdentity.set(identity, printing.id)
+    const priorId = previousByIdentity.get(identity)
+    if (priorId && priorId !== printing.id) unstablePrintingIds += 1
+  }
+  const previousIdentities = [...previousByIdentity.keys()]
+  const currentIdentities = [...currentByIdentity.keys()]
+  const stableMatches = currentIdentities.filter((identity) =>
+    previousByIdentity.has(identity),
+  ).length
+  const stableSummary = {
+    previousBuildId,
+    stableMatches,
+    addedIdentities: currentIdentities.length - stableMatches,
+    missingIdentities: previousIdentities.length - stableMatches,
+    unstablePrintingIds,
+  }
+  if (!report.identityAudit)
+    report.identityAudit = {
+      printingsByLanguage: {},
+      printingsByEdition: {},
+      printingsByFinish: {},
+      compoundFinishCount: 0,
+      editionEmbeddedInFinishCount: 0,
+      duplicatePhysicalIdentityCount: 0,
+    }
+  report.identityAudit.stableIdComparison = stableSummary
+  if (unstablePrintingIds)
+    report.issues.push({
+      severity: 'warning',
+      code: 'unstable-printing-id',
+      message: `${unstablePrintingIds} unchanged catalog printing identities resolved to new printing IDs versus ${previousBuildId}`,
+    })
 }
 
 export function deterministicTimestamp(release: string): string {
@@ -161,6 +277,11 @@ export async function buildCatalogBundle(
       message: `${coverage.totalSets - coverage.approved} sets lack approved taxonomy`,
     })
   report.valid = !report.issues.some((issue) => issue.severity === 'error')
+  await compareStablePrintingIds(
+    report,
+    catalog.printings,
+    options.previousManifest,
+  )
   if (!options.allowCountDrop)
     await checkCountRegression(report, options.previousManifest)
   assertValid(report)

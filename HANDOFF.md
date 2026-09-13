@@ -42,7 +42,7 @@ See [R2 operations](docs/r2-operations.md) for credentials, publication, verific
 
 ## Deliberate limitations
 
-- Pricing ownership is moving to the sibling `cadence-pricing` repository. The implementation here is transitional and should be removed only after a compatible replacement is live.
+- Pricing originally lived here because TCGCSV catalog imports included price fields. `cadence-pricing` now owns daily price acquisition, immutable observations, and valuation publication, currently for Pokemon. The implementation here is a compatibility bridge and should be removed only after the replacement path is verified in production. `cadence-cdn` remains the authoritative catalog and stable-ID/crosswalk publisher.
 - Sealed products are a separate catalog domain owned here. TCGCSV products are the planned initial discovery source; they require conservative classification and independent product/configuration identities.
 - All upstream TCGplayer card and set URLs are `reference-only`. They are not mirrored to R2 or represented as licensed.
 - Owned-image ingestion, R2 derivative publication, verification, provenance recording, and draft substitution are implemented. See [image assets](docs/image-assets.md).
@@ -54,6 +54,6 @@ See [R2 operations](docs/r2-operations.md) for credentials, publication, verific
 2. Implement the TCGCSV sealed-product candidate importer, classifier/review queue, product/configuration identities, schema, validation, and artifacts.
 3. Review the 219 pending Pokémon era/set-kind assignments.
 4. Add further TCGs one at a time with dedicated fixtures, validation, and source policies.
-5. Extract the transitional pricing implementation after `cadence-pricing` publishes a compatible replacement.
+5. Retire the historical pricing bridge only after `cadence-pricing` has a verified compatible replacement for every consumer still using it.
 
 Do not download or republish provider images while implementing later phases. Every public owned asset must have recorded rights provenance and an explicit approval step.
