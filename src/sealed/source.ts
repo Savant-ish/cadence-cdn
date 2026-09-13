@@ -24,22 +24,33 @@ export async function fetchSealedCandidates(options: {
 }): Promise<{ bytes: number; sha256: string; sourceUrl: string }> {
   const request = options.request ?? fetch
   const getJson = async (url: string): Promise<unknown> => {
-    const response = await request(url, { signal: AbortSignal.timeout(120_000) })
+    const response = await request(url, {
+      signal: AbortSignal.timeout(120_000),
+    })
     if (!response.ok) throw new Error(`Fetch failed: ${response.status} ${url}`)
     return response.json()
   }
-  const latest = object(await getJson(options.latestUrl), 'Pricing latest') as unknown as PricingLatest
+  const latest = object(
+    await getJson(options.latestUrl),
+    'Pricing latest',
+  ) as unknown as PricingLatest
   if (!latest.manifestUrl || !latest.pricingBaseUrl)
     throw new Error('Pricing latest is missing manifestUrl or pricingBaseUrl')
-  const manifest = object(await getJson(latest.manifestUrl), 'Pricing manifest') as unknown as PricingManifest
+  const manifest = object(
+    await getJson(latest.manifestUrl),
+    'Pricing manifest',
+  ) as unknown as PricingManifest
   const artifact = manifest.artifacts?.find(
     (item) => item.path === 'sealed-candidates.json',
   )
   if (!artifact || !/^[a-f0-9]{64}$/.test(artifact.sha256))
     throw new Error('Pricing manifest has no sealed-candidates artifact')
   const sourceUrl = `${latest.pricingBaseUrl.replace(/\/$/, '')}/${artifact.path}`
-  const response = await request(sourceUrl, { signal: AbortSignal.timeout(120_000) })
-  if (!response.ok) throw new Error(`Fetch failed: ${response.status} ${sourceUrl}`)
+  const response = await request(sourceUrl, {
+    signal: AbortSignal.timeout(120_000),
+  })
+  if (!response.ok)
+    throw new Error(`Fetch failed: ${response.status} ${sourceUrl}`)
   const bytes = Buffer.from(await response.arrayBuffer())
   const digest = sha256(bytes)
   if (digest !== artifact.sha256)

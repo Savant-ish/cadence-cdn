@@ -147,7 +147,12 @@ export async function publishSealedToStore(
 ): Promise<{ buildId: string; uploaded: number; skipped: number }> {
   const manifest = JSON.parse(
     await readFile(resolve(root, 'sealed', 'manifest.json'), 'utf8'),
-  ) as { schemaVersion: number; buildId: string; generatedAt: string; game: string }
+  ) as {
+    schemaVersion: number
+    buildId: string
+    generatedAt: string
+    game: string
+  }
   if (!/^[a-f0-9]{16}$/.test(manifest.buildId))
     throw new Error('Sealed manifest contains an invalid build ID')
   const prefix = `sealed/builds/${manifest.buildId}`
@@ -163,7 +168,9 @@ export async function publishSealedToStore(
     const existing = await store.head(key)
     if (existing) {
       if (existing.sha256 !== digest)
-        throw new Error(`Refusing to overwrite conflicting immutable object: ${key}`)
+        throw new Error(
+          `Refusing to overwrite conflicting immutable object: ${key}`,
+        )
       skipped += 1
     } else {
       await store.put(key, body, {
@@ -178,14 +185,16 @@ export async function publishSealedToStore(
   }
   await verifyPublicObjects(store, published)
   const base = normalizedBaseUrl(publicBaseUrl)
-  const latest = Buffer.from(stableJson({
-    schemaVersion: manifest.schemaVersion,
-    buildId: manifest.buildId,
-    generatedAt: manifest.generatedAt,
-    game: manifest.game,
-    manifestUrl: `${base}/${prefix}/manifest.json`,
-    sealedBaseUrl: `${base}/${prefix}`,
-  }))
+  const latest = Buffer.from(
+    stableJson({
+      schemaVersion: manifest.schemaVersion,
+      buildId: manifest.buildId,
+      generatedAt: manifest.generatedAt,
+      game: manifest.game,
+      manifestUrl: `${base}/${prefix}/manifest.json`,
+      sealedBaseUrl: `${base}/${prefix}`,
+    }),
+  )
   await store.put('sealed/latest.json', latest, {
     contentType: 'application/json; charset=utf-8',
     cacheControl: 'public, max-age=60, must-revalidate',
@@ -282,29 +291,54 @@ export async function publishSealedToR2(
   const client = new S3Client({
     region: 'auto',
     endpoint: `https://${options.accountId}.r2.cloudflarestorage.com`,
-    credentials: { accessKeyId: options.accessKeyId, secretAccessKey: options.secretAccessKey },
+    credentials: {
+      accessKeyId: options.accessKeyId,
+      secretAccessKey: options.secretAccessKey,
+    },
   })
   const base = normalizedBaseUrl(options.publicBaseUrl)
   const store: ObjectStore = {
     async head(key) {
       try {
-        const result = await client.send(new HeadObjectCommand({ Bucket: options.bucket, Key: key }))
+        const result = await client.send(
+          new HeadObjectCommand({ Bucket: options.bucket, Key: key }),
+        )
         return result.Metadata?.sha256 ? { sha256: result.Metadata.sha256 } : {}
       } catch (error: unknown) {
-        if ((error as { $metadata?: { httpStatusCode?: number } }).$metadata?.httpStatusCode === 404) return undefined
+        if (
+          (error as { $metadata?: { httpStatusCode?: number } }).$metadata
+            ?.httpStatusCode === 404
+        )
+          return undefined
         throw error
       }
     },
     async put(key, body, metadata) {
-      await client.send(new PutObjectCommand({ Bucket: options.bucket, Key: key, Body: body, ContentType: metadata.contentType, CacheControl: metadata.cacheControl, Metadata: { sha256: metadata.sha256 } }))
+      await client.send(
+        new PutObjectCommand({
+          Bucket: options.bucket,
+          Key: key,
+          Body: body,
+          ContentType: metadata.contentType,
+          CacheControl: metadata.cacheControl,
+          Metadata: { sha256: metadata.sha256 },
+        }),
+      )
     },
     async verifyPublic(key, expected) {
-      const response = await fetch(`${base}/${key}`, { signal: AbortSignal.timeout(120_000) })
-      if (!response.ok) throw new Error(`Public sealed verification failed: ${key}`)
+      const response = await fetch(`${base}/${key}`, {
+        signal: AbortSignal.timeout(120_000),
+      })
+      if (!response.ok)
+        throw new Error(`Public sealed verification failed: ${key}`)
       const body = Buffer.from(await response.arrayBuffer())
       if (body.length !== expected.bytes || sha256(body) !== expected.sha256)
         throw new Error(`Public sealed verification mismatch: ${key}`)
     },
   }
-  return publishSealedToStore(resolve(options.root), options.publicBaseUrl, store)
+  return publishSealedToStore(
+    resolve(options.root),
+    options.publicBaseUrl,
+    store,
+  )
 }

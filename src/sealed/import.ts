@@ -33,7 +33,12 @@ export interface SealedProduct {
   groupName?: string
   externalIds: { 'tcgplayer.productId': string }
   image: { sourceUrl?: string; status: 'reference-only' | 'unavailable' }
-  provenance: { provider: 'tcgcsv'; release: string; sourceUrl?: string; importedAt: string }
+  provenance: {
+    provider: 'tcgcsv'
+    release: string
+    sourceUrl?: string
+    importedAt: string
+  }
 }
 
 function input(value: unknown): CandidateInput {
@@ -64,7 +69,8 @@ export function importSealedCandidates(value: unknown): {
       !candidate.providerProductId ||
       !candidate.name?.trim() ||
       !candidate.productFamily?.trim() ||
-      candidate.externalIds?.['tcgplayer.productId'] !== candidate.providerProductId
+      candidate.externalIds?.['tcgplayer.productId'] !==
+        candidate.providerProductId
     )
       throw new Error('sealed candidate is invalid')
     const identity = createIdentity(
@@ -93,7 +99,8 @@ export function importSealedCandidates(value: unknown): {
     }
   })
   const ids = new Set(products.map((product) => product.id))
-  if (ids.size !== products.length) throw new Error('sealed candidates are not unique')
+  if (ids.size !== products.length)
+    throw new Error('sealed candidates are not unique')
   return {
     game: source.game,
     fetchedAt: source.fetchedAt,
@@ -120,6 +127,9 @@ export async function publishSealedCandidates(
     .update(stableJson(descriptor))
     .digest('hex')
     .slice(0, 16)
-  await writeJson(join(output, 'sealed/manifest.json'), { ...descriptor, buildId })
+  await writeJson(join(output, 'sealed/manifest.json'), {
+    ...descriptor,
+    buildId,
+  })
   return { buildId, products: catalog.products.length }
 }

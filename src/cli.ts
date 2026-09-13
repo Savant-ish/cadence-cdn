@@ -64,35 +64,56 @@ async function main(): Promise<void> {
         'latest-url',
         'https://cdn.cadencetcg.dev/pricing/latest.json',
       ),
-      output: resolve(textFlag(parsed.flags, 'output', 'snapshots/sealed/candidates.json')),
+      output: resolve(
+        textFlag(parsed.flags, 'output', 'snapshots/sealed/candidates.json'),
+      ),
     })
     console.log(`Fetched verified sealed candidates: ${result.bytes} bytes`)
     return
   }
   if (parsed.command === 'sealed-import') {
     const source = JSON.parse(
-      await (await import('node:fs/promises')).readFile(
-        resolve(textFlag(parsed.flags, 'input')),
-        'utf8',
-      ),
+      await (
+        await import('node:fs/promises')
+      ).readFile(resolve(textFlag(parsed.flags, 'input')), 'utf8'),
     ) as unknown
     const result = await publishSealedCandidates(
       source,
       resolve(textFlag(parsed.flags, 'output', 'sealed-dist')),
     )
-    console.log(`Published sealed build ${result.buildId}: ${result.products} products`)
+    console.log(
+      `Published sealed build ${result.buildId}: ${result.products} products`,
+    )
     return
   }
   if (parsed.command === 'sealed-publish-r2') {
     const result = await publishSealedToR2({
       root: resolve(textFlag(parsed.flags, 'root', 'sealed-dist')),
       bucket: textFlag(parsed.flags, 'bucket', process.env.R2_CATALOG_BUCKET),
-      accountId: textFlag(parsed.flags, 'account-id', process.env.R2_ACCOUNT_ID),
-      publicBaseUrl: textFlag(parsed.flags, 'public-base-url', process.env.R2_PUBLIC_BASE_URL),
-      accessKeyId: textFlag(parsed.flags, 'access-key-id', process.env.R2_ACCESS_KEY_ID),
-      secretAccessKey: textFlag(parsed.flags, 'secret-access-key', process.env.R2_SECRET_ACCESS_KEY),
+      accountId: textFlag(
+        parsed.flags,
+        'account-id',
+        process.env.R2_ACCOUNT_ID,
+      ),
+      publicBaseUrl: textFlag(
+        parsed.flags,
+        'public-base-url',
+        process.env.R2_PUBLIC_BASE_URL,
+      ),
+      accessKeyId: textFlag(
+        parsed.flags,
+        'access-key-id',
+        process.env.R2_ACCESS_KEY_ID,
+      ),
+      secretAccessKey: textFlag(
+        parsed.flags,
+        'secret-access-key',
+        process.env.R2_SECRET_ACCESS_KEY,
+      ),
     })
-    console.log(`Published sealed build ${result.buildId}: ${result.uploaded} uploaded`)
+    console.log(
+      `Published sealed build ${result.buildId}: ${result.uploaded} uploaded`,
+    )
     return
   }
   if (parsed.command === 'pricing-fetch-catalog') {
