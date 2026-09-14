@@ -6,12 +6,12 @@ The multi-game card catalog is implemented for Pokémon, Disney Lorcana, and One
 
 Production entry point: <https://cdn.cadencetcg.dev/catalog/latest.json>
 
-The current public schema is `1.2.0`; identity normalization is `v1`. Consumers must discover the current immutable build through `latest.json`, validate the supported schema version, fetch only manifest-declared artifacts, and verify byte sizes and SHA-256 checksums before atomically accepting a build.
+The current public schema is `1.2.1`; identity normalization is `v1`. Consumers must discover the current immutable build through `latest.json`, validate the supported schema version, fetch only manifest-declared artifacts, and verify byte sizes and SHA-256 checksums before atomically accepting a build.
 
 ## Implemented capabilities
 
 - Game registry and `tcgjson` adapters for Pokémon, Disney Lorcana, and One Piece Card Game.
-- Stable Cadence game, set, card, and printing IDs independent of provider IDs.
+- Stable Cadence game, set, card, and printing IDs independent of provider IDs, with TCGplayer group IDs retained on canonical sets as external crosswalks.
 - Conceptual-card and printing separation; inventory should reference printing IDs.
 - Source provenance and external-ID crosswalks.
 - Set and printing image-reference metadata with explicit policy status.

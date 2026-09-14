@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = '1.2.0'
+export const SCHEMA_VERSION = '1.2.1'
 export const IDENTITY_VERSION = 'v1'
 
 export interface CatalogGame {

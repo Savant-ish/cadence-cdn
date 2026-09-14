@@ -1,4 +1,4 @@
-# Catalog schema 1.2.0
+# Catalog schema 1.2.1
 
 The machine-readable contract is [`schemas/catalog.schema.json`](../schemas/catalog.schema.json). Games contain sets and conceptual cards. Sets may carry a source icon URL under the same reference-only image policy used for card printings. A printing joins a card to a set and carries collector number, language, variant details, external cross-references, image-reference policy, and provenance.
 
@@ -6,7 +6,7 @@ An approved set taxonomy adds `classification.eraId`, `classification.eraName`, 
 
 Cadence IDs are SHA-256-derived opaque identifiers. `identityKey` is intentionally retained for collision audits. Consumers must use `id`, not reconstruct it or depend on `identityKey` formatting.
 
-Set identity uses the normalized game and full set name because upstream set abbreviations are not unique. Printing identity includes the conceptual card key as well as set, collector number (or an explicit unnumbered marker), language, and variant; this disambiguates products such as trainer-kit half decks that reuse collector numbers.
+Set identity uses the normalized game and full set name because upstream set abbreviations are not unique. Sets retain provider crosswalks in optional `externalIds`; for TCGJSON imports, `tcgplayer.groupId` is the exact TCGplayer group/set identifier used to connect eligible sealed products. Printing identity includes the conceptual card key as well as set, collector number (or an explicit unnumbered marker), language, and variant; this disambiguates products such as trainer-kit half decks that reuse collector numbers.
 
 Collector-number punctuation is encoded by Unicode code point before slug normalization, so meaningful values such as `!/28` and `?/28` cannot collapse to the same identity.
 
@@ -60,4 +60,4 @@ The pointer is mutable and briefly cached. Its target tree is immutable. Consume
 
 Adding optional fields is backward-compatible within a schema line. Removing or changing field meaning, identity behavior, required fields, or artifact semantics requires a schema-version change. Consumers must explicitly allow supported schema versions rather than assuming every future version is compatible.
 
-Sealed products are not present in schema `1.2.0`. Their future public contract will introduce separate sealed product and configuration identities, initially discovered from conservatively classified TCGCSV products. This requires schema-version and cadence-web compatibility review; sealed inventory must never use a card-printing ID.
+Sealed products are not present in the card catalog artifact. Their separate public contract is discovered from conservatively classified TCGCSV products. Exact set links use a set's `tcgplayer.groupId` external crosswalk; unmatched products remain unlinked rather than being matched by name. Sealed inventory must never use a card-printing ID.
