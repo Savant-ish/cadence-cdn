@@ -229,6 +229,7 @@ async function mapTcgjsonGame(
       gameId: game.id,
       ...(code ? { code } : {}),
       name,
+      externalIds: { 'tcgplayer.groupId': externalId },
       ...(releaseDate ? { releaseDate } : {}),
       image: iconUrl
         ? { sourceUrl: iconUrl, status: 'reference-only' as const }

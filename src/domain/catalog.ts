@@ -14,6 +14,7 @@ export interface CatalogSet {
   gameId: string
   code?: string
   name: string
+  externalIds?: Record<string, string>
   releaseDate?: string
   image?: {
     sourceUrl?: string

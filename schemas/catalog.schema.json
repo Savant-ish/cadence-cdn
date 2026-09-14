@@ -43,6 +43,10 @@
             "gameId": { "type": "string" },
             "code": { "type": "string" },
             "name": { "type": "string" },
+            "externalIds": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            },
             "releaseDate": { "type": "string", "format": "date" },
             "image": {
               "type": "object",
