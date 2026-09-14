@@ -31,7 +31,10 @@ export interface SealedProduct {
   productFamily: string
   groupId: string
   groupName?: string
-  includedSetGroups?: Array<{ role: 'promo' | 'booster-pack'; setGroupId: string }>
+  includedSetGroups?: Array<{
+    role: 'promo' | 'booster-pack'
+    setGroupId: string
+  }>
   externalIds: { 'tcgplayer.productId': string }
   image: { sourceUrl?: string; status: 'reference-only' | 'unavailable' }
   provenance: {
@@ -59,7 +62,14 @@ function input(value: unknown): CandidateInput {
   return item as CandidateInput
 }
 
-export function importSealedCandidates(value: unknown, rules: Array<{ groupId: string; nameIncludes: string; links: Array<{ role: 'promo' | 'booster-pack'; setGroupId: string }> }> = []): {
+export function importSealedCandidates(
+  value: unknown,
+  rules: Array<{
+    groupId: string
+    nameIncludes: string
+    links: Array<{ role: 'promo' | 'booster-pack'; setGroupId: string }>
+  }> = [],
+): {
   game: string
   fetchedAt: string
   products: SealedProduct[]
@@ -80,7 +90,11 @@ export function importSealedCandidates(value: unknown, rules: Array<{ groupId: s
       candidate.productFamily,
       candidate.providerProductId,
     )
-    const includedSetGroups = rules.find((rule) => rule.groupId === candidate.groupId && candidate.name.includes(rule.nameIncludes))?.links
+    const includedSetGroups = rules.find(
+      (rule) =>
+        rule.groupId === candidate.groupId &&
+        candidate.name.includes(rule.nameIncludes),
+    )?.links
     return {
       ...identity,
       game: source.game,
@@ -114,7 +128,11 @@ export function importSealedCandidates(value: unknown, rules: Array<{ groupId: s
 export async function publishSealedCandidates(
   value: unknown,
   output: string,
-  rules?: Array<{ groupId: string; nameIncludes: string; links: Array<{ role: 'promo' | 'booster-pack'; setGroupId: string }> }>,
+  rules?: Array<{
+    groupId: string
+    nameIncludes: string
+    links: Array<{ role: 'promo' | 'booster-pack'; setGroupId: string }>
+  }>,
 ): Promise<{ buildId: string; products: number }> {
   const catalog = importSealedCandidates(value, rules)
   await rm(output, { recursive: true, force: true })

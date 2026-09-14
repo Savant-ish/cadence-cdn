@@ -1,1 +1,31 @@
-{"rules":[{"groupId":"24584","nameIncludes":"Series 1","links":[{"role":"promo","setGroupId":"24451"},{"role":"booster-pack","setGroupId":"24380"},{"role":"booster-pack","setGroupId":"24448"}]},{"groupId":"24584","nameIncludes":"Series 2","links":[{"role":"promo","setGroupId":"24451"},{"role":"booster-pack","setGroupId":"24587"},{"role":"booster-pack","setGroupId":"24655"}]},{"groupId":"24584","nameIncludes":"Series 3","links":[{"role":"promo","setGroupId":"24451"},{"role":"booster-pack","setGroupId":"24688"},{"role":"booster-pack","setGroupId":"24655"}]}]}
+{
+  "rules": [
+    {
+      "groupId": "24584",
+      "nameIncludes": "Series 1",
+      "links": [
+        { "role": "promo", "setGroupId": "24451" },
+        { "role": "booster-pack", "setGroupId": "24380" },
+        { "role": "booster-pack", "setGroupId": "24448" }
+      ]
+    },
+    {
+      "groupId": "24584",
+      "nameIncludes": "Series 2",
+      "links": [
+        { "role": "promo", "setGroupId": "24451" },
+        { "role": "booster-pack", "setGroupId": "24587" },
+        { "role": "booster-pack", "setGroupId": "24655" }
+      ]
+    },
+    {
+      "groupId": "24584",
+      "nameIncludes": "Series 3",
+      "links": [
+        { "role": "promo", "setGroupId": "24451" },
+        { "role": "booster-pack", "setGroupId": "24688" },
+        { "role": "booster-pack", "setGroupId": "24655" }
+      ]
+    }
+  ]
+}
