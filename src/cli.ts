@@ -77,9 +77,15 @@ async function main(): Promise<void> {
         await import('node:fs/promises')
       ).readFile(resolve(textFlag(parsed.flags, 'input')), 'utf8'),
     ) as unknown
+    const rules = JSON.parse(
+      await (
+        await import('node:fs/promises')
+      ).readFile(resolve(textFlag(parsed.flags, 'set-links', 'config/sealed-set-links.json')), 'utf8'),
+    ) as { rules?: Array<{ groupId: string; nameIncludes: string; links: Array<{ role: 'promo' | 'booster-pack'; setGroupId: string }> }> }
     const result = await publishSealedCandidates(
       source,
       resolve(textFlag(parsed.flags, 'output', 'sealed-dist')),
+      rules.rules ?? [],
     )
     console.log(
       `Published sealed build ${result.buildId}: ${result.products} products`,
