@@ -9,6 +9,7 @@ import {
   normalizeCollectorNumber,
   normalizeComponent,
 } from '../../identity/cadence-id.js'
+import { POKEMON_EDITION_POLICY_BY_TCGPLAYER_SET_ID } from '../../config/pokemon-edition-policies.js'
 import { parseCatalog } from './types.js'
 import type { TcgjsonProduct } from './types.js'
 
@@ -132,6 +133,30 @@ function buildVariants(
       `${a.finish ?? ''}`.localeCompare(`${b.finish ?? ''}`),
   )
   return variants
+}
+
+function applyPokemonEditionPolicy(
+  sourceSetId: string | undefined,
+  variants: PrintingVariant[],
+): PrintingVariant[] {
+  const editions = sourceSetId
+    ? POKEMON_EDITION_POLICY_BY_TCGPLAYER_SET_ID[sourceSetId as keyof typeof POKEMON_EDITION_POLICY_BY_TCGPLAYER_SET_ID]
+    : undefined
+  if (!editions) return variants
+
+  const supplemented = new Map<string, PrintingVariant>()
+  for (const variant of variants) {
+    const applies = variant.edition === 'Unlimited' || variant.edition === '1st Edition'
+    for (const edition of applies ? editions : [variant.edition]) {
+      const next = { ...variant, ...(edition ? { edition } : {}) }
+      supplemented.set(`${next.edition ?? ''}|${next.finish ?? ''}`, next)
+    }
+  }
+  return [...supplemented.values()].sort(
+    (a, b) =>
+      `${a.edition ?? ''}`.localeCompare(`${b.edition ?? ''}`) ||
+      `${a.finish ?? ''}`.localeCompare(`${b.finish ?? ''}`),
+  )
 }
 
 export function isPokemonCodeCard(product: TcgjsonProduct): boolean {
@@ -284,7 +309,9 @@ async function mapTcgjsonGame(
         optionalText(product.imageUrl) ??
         product.imageUrls?.find((url) => Boolean(url))
       const rarity = optionalText(product.rarity) ?? attribute(attrs, 'rarity')
-      const variants = buildVariants(finish, edition)
+      const variants = options.slug === 'pokemon'
+        ? applyPokemonEditionPolicy(sourceSetId, buildVariants(finish, edition))
+        : buildVariants(finish, edition)
       const collectorIdentity = collectorNumber
         ? normalizeCollectorNumber(collectorNumber)
         : `unnumbered-${normalizedName}`
